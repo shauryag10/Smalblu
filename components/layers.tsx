@@ -3,47 +3,86 @@
 import { useEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/reveal";
-import { ButterflyWatermark } from "@/components/butterfly";
+import { LogoMark } from "@/components/logo";
 
-const LAYERS = [
+type Layer = {
+  name: string;
+  dot: string;
+  desc: string;
+  icon: React.ReactNode;
+};
+
+const stroke = { strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round" } as const;
+
+const LAYERS: Layer[] = [
   {
     name: "User",
-    desc: "Learns real usage patterns and demand cycles, so capacity always follows actual need.",
+    dot: "#80b9e7",
+    desc: "Learns real usage patterns and demand cycles, so capacity follows actual need.",
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" aria-hidden="true">
+        <circle cx="10" cy="6.5" r="3" stroke="currentColor" {...stroke} />
+        <path d="M4 16.5c.8-3 3.2-4.5 6-4.5s5.2 1.5 6 4.5" stroke="currentColor" {...stroke} />
+      </svg>
+    ),
   },
   {
     name: "Application",
+    dot: "#4096db",
     desc: "Tunes services, caching, and hot code paths for maximum throughput.",
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" aria-hidden="true">
+        <rect x="2.5" y="3.5" width="15" height="13" rx="2" stroke="currentColor" {...stroke} />
+        <path d="M2.5 7h15M7.5 10.5l-2 2 2 2M12.5 10.5l2 2-2 2" stroke="currentColor" {...stroke} />
+      </svg>
+    ),
   },
   {
     name: "Compute",
+    dot: "#3b82ff",
     desc: "Right-sizes instances, autoscaling, and scheduling to eliminate idle spend.",
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" aria-hidden="true">
+        <rect x="5" y="5" width="10" height="10" rx="2" stroke="currentColor" {...stroke} />
+        <path d="M8 1.5v3M12 1.5v3M8 15.5v3M12 15.5v3M1.5 8h3M1.5 12h3M15.5 8h3M15.5 12h3" stroke="currentColor" {...stroke} />
+      </svg>
+    ),
   },
   {
     name: "Network",
+    dot: "#2f8fd8",
     desc: "Cuts egress waste and latency with smarter routing and data placement.",
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" aria-hidden="true">
+        <circle cx="10" cy="4" r="2" stroke="currentColor" {...stroke} />
+        <circle cx="4" cy="15" r="2" stroke="currentColor" {...stroke} />
+        <circle cx="16" cy="15" r="2" stroke="currentColor" {...stroke} />
+        <path d="M9 5.7 5 13.2M11 5.7l4 7.5M6 15h8" stroke="currentColor" {...stroke} />
+      </svg>
+    ),
   },
   {
     name: "Database",
+    dot: "#2b7fc4",
     desc: "Continuously optimizes queries, indexes, and engine parameters.",
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" aria-hidden="true">
+        <ellipse cx="10" cy="4.5" rx="6.5" ry="2.5" stroke="currentColor" {...stroke} />
+        <path d="M3.5 4.5v11c0 1.4 2.9 2.5 6.5 2.5s6.5-1.1 6.5-2.5v-11M3.5 10c0 1.4 2.9 2.5 6.5 2.5s6.5-1.1 6.5-2.5" stroke="currentColor" {...stroke} />
+      </svg>
+    ),
   },
   {
     name: "Storage",
+    dot: "#2670ab",
     desc: "Tiers and compresses data so every byte earns its keep.",
-  },
-];
-
-const PILLARS = [
-  {
-    title: "Full-stack observability",
-    desc: "Complete visibility from user behavior down to storage, with a natural-language interface on top.",
-  },
-  {
-    title: "Proprietary compression engine",
-    desc: "Industry-first technology that intelligently compresses and caches data, cutting storage and load by 35 to 50%.",
-  },
-  {
-    title: "LLM-powered agents",
-    desc: "A continuously learning agentic system that reasons about your infrastructure and tunes it automatically.",
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" aria-hidden="true">
+        <rect x="2.5" y="3" width="15" height="6" rx="1.5" stroke="currentColor" {...stroke} />
+        <rect x="2.5" y="11" width="15" height="6" rx="1.5" stroke="currentColor" {...stroke} />
+        <path d="M5.5 6h.01M5.5 14h.01" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      </svg>
+    ),
   },
 ];
 
@@ -52,7 +91,7 @@ export function Layers() {
   const [paused, setPaused] = useState(false);
   const reduce = useReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(sectionRef, { margin: "-25% 0px -25% 0px" });
+  const inView = useInView(sectionRef, { margin: "-20% 0px -20% 0px" });
 
   useEffect(() => {
     if (reduce || paused || !inView) return;
@@ -61,108 +100,131 @@ export function Layers() {
   }, [reduce, paused, inView]);
 
   return (
-    <section id="how-it-works" className="scroll-mt-24 py-24 sm:py-32" aria-labelledby="layers-heading">
+    <section id="how-it-works" className="relative scroll-mt-24 py-24 sm:py-32" aria-labelledby="layers-heading">
       <div className="container-x">
-        <Reveal>
-          <div
-            ref={sectionRef}
-            className="panel-blue relative overflow-hidden rounded-[28px]"
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-            onFocusCapture={() => setPaused(true)}
-            onBlurCapture={() => setPaused(false)}
+        <Reveal className="max-w-3xl">
+          <p className="kicker">How it works</p>
+          <h2
+            id="layers-heading"
+            className="mt-4 text-balance text-4xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl"
           >
-            <ButterflyWatermark
-              className="-bottom-[24%] -right-[16%] w-[720px] rotate-[7deg] text-white lg:w-[860px]"
-              opacityClass="opacity-[0.1]"
-            />
-
-            <div className="relative grid gap-12 px-6 py-14 sm:px-12 sm:py-16 lg:grid-cols-[1fr_1.15fr] lg:gap-16 lg:px-16 lg:py-20">
-              {/* statement + pillars */}
-              <div>
-                <p className="kicker kicker-on-blue">How it works</p>
-                <h2
-                  id="layers-heading"
-                  className="mt-4 text-balance text-4xl font-semibold leading-[1.06] tracking-[-0.03em] text-white sm:text-5xl"
-                >
-                  Cross-Layer Data Optimization
-                </h2>
-                <p className="mt-5 max-w-xl text-pretty text-lg leading-relaxed text-white/85">
-                  One platform unifies all six infrastructure layers. No siloed tools. No
-                  specialists. SmalBlu monitors and optimizes your data infrastructure 24/7,
-                  because the biggest wins live between the layers, not inside them.
-                </p>
-
-                <ul className="mt-10 hidden max-w-xl flex-col lg:flex">
-                  {PILLARS.map((p) => (
-                    <li key={p.title} className="border-t border-white/20 py-5 first:border-t-0">
-                      <p className="text-[15px] font-semibold text-white">{p.title}</p>
-                      <p className="mt-1.5 text-sm leading-relaxed text-white/75">{p.desc}</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* six numbered layers */}
-              <div className="flex flex-col" role="tablist" aria-label="The six infrastructure layers">
-                {LAYERS.map((layer, i) => {
-                  const isActive = i === active;
-                  return (
-                    <button
-                      key={layer.name}
-                      type="button"
-                      role="tab"
-                      aria-selected={isActive}
-                      onMouseEnter={() => setActive(i)}
-                      onFocus={() => setActive(i)}
-                      onClick={() => setActive(i)}
-                      className={`group relative flex w-full items-baseline gap-5 rounded-2xl border-t px-4 py-4 text-left transition-all duration-300 sm:gap-7 sm:px-6 sm:py-[1.15rem] ${
-                        isActive
-                          ? "border-transparent bg-white shadow-[0_18px_50px_-20px_rgba(0,15,26,0.5)]"
-                          : "hover:bg-white/10"
-                      } ${i > 0 && !isActive ? "border-white/20" : "border-transparent"}`}
-                    >
-                      <span
-                        aria-hidden="true"
-                        className={`font-mono text-xl font-semibold tabular sm:text-2xl ${
-                          isActive ? "text-accent" : "text-[#9cc6ff]/80"
-                        }`}
-                      >
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <span className="flex-1">
-                        <span
-                          className={`block text-lg font-semibold tracking-tight sm:text-xl ${
-                            isActive ? "text-navy" : "text-white"
-                          }`}
-                        >
-                          {layer.name}
-                        </span>
-                        <span
-                          className={`mt-1 block overflow-hidden text-sm leading-relaxed transition-all duration-300 ${
-                            isActive ? "max-h-20 text-[#37516b] opacity-100" : "max-h-0 opacity-0"
-                          }`}
-                        >
-                          {layer.desc}
-                        </span>
-                      </span>
-                      <svg
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        aria-hidden="true"
-                        className={`h-4 w-4 shrink-0 self-center transition-all duration-300 ${
-                          isActive ? "text-accent opacity-100" : "text-white/0 group-hover:text-white/60"
-                        }`}
-                      >
-                        <path d="M3 8h10m0 0-4-4m4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+            Cross-Layer Data <span className="accent-word">Optimization</span>
+          </h2>
+          <p className="mt-5 text-pretty text-lg leading-relaxed text-fog">
+            One platform unifies all six infrastructure layers. No siloed tools. No specialists.
+            SmalBlu monitors and optimizes your data infrastructure 24/7, because the biggest
+            wins live between the layers, not inside them.
+          </p>
         </Reveal>
+
+        <div
+          ref={sectionRef}
+          className="mt-12 grid items-center gap-12 lg:mt-14 lg:grid-cols-[1.05fr_1fr] lg:gap-10"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocusCapture={() => setPaused(true)}
+          onBlurCapture={() => setPaused(false)}
+        >
+          {/* isometric stack */}
+          <div className="relative mx-auto flex h-[500px] w-full max-w-[460px] flex-col sm:h-[580px]" aria-hidden="true">
+            {/* vertical beam with the mark at its head */}
+            <div className="absolute left-1/2 top-[3%] h-[91%] w-px -translate-x-1/2 bg-gradient-to-b from-accent/80 via-accent/25 to-transparent" />
+            <LogoMark className="absolute left-1/2 top-[1%] h-6 w-auto -translate-x-1/2 text-accent drop-shadow-[0_0_14px_rgba(0,94,255,0.9)]" />
+
+            {LAYERS.map((layer, i) => {
+              const isActive = i === active;
+              return (
+                <button
+                  key={layer.name}
+                  type="button"
+                  tabIndex={-1}
+                  onMouseEnter={() => setActive(i)}
+                  onClick={() => setActive(i)}
+                  className="absolute left-1/2 w-[264px] transition-transform duration-500 sm:w-[300px]"
+                  style={{
+                    top: `${10.5 + i * 13.6}%`,
+                    transform: `translateX(-50%) translateY(${isActive && !reduce ? -8 : 0}px)`,
+                    zIndex: isActive ? 20 : 10 - i,
+                  }}
+                >
+                  <div
+                    className={`flex h-[96px] items-center justify-center rounded-[18px] border backdrop-blur-sm transition-all duration-500 sm:h-[106px] ${
+                      isActive
+                        ? "border-accent/60 bg-accent/[0.13] shadow-[0_0_50px_-8px_rgba(0,94,255,0.55)]"
+                        : "border-white/10 bg-white/[0.025]"
+                    }`}
+                    style={{ transform: "rotateX(56deg) rotateZ(-42deg)" }}
+                  >
+                    <span
+                      className={`flex items-center gap-2.5 transition-colors duration-500 ${
+                        isActive ? "text-ink" : "text-fog/70"
+                      }`}
+                    >
+                      <span style={{ color: isActive ? layer.dot : undefined }}>{layer.icon}</span>
+                      <span className="text-sm font-semibold tracking-wide">{layer.name}</span>
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+
+            <p className="absolute inset-x-0 bottom-0 text-center font-mono text-[11px] tracking-wide text-faint">
+              Six agents. One coordinated optimization and compression engine.
+            </p>
+          </div>
+
+          {/* editorial layer list */}
+          <div className="flex flex-col" role="tablist" aria-label="Infrastructure layers">
+            {LAYERS.map((layer, i) => {
+              const isActive = i === active;
+              return (
+                <button
+                  key={layer.name}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  onMouseEnter={() => setActive(i)}
+                  onFocus={() => setActive(i)}
+                  onClick={() => setActive(i)}
+                  className={`group relative flex w-full items-baseline gap-5 border-t px-2 py-5 text-left transition-colors duration-300 sm:gap-6 sm:px-4 ${
+                    i === 0 ? "border-transparent" : "border-line"
+                  } ${isActive ? "" : "hover:bg-white/[0.02]"}`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`absolute left-0 top-1/2 h-9 w-[3px] -translate-y-1/2 rounded-full transition-all duration-300 ${
+                      isActive ? "opacity-100" : "opacity-0"
+                    }`}
+                    style={{ backgroundColor: layer.dot, boxShadow: `0 0 12px ${layer.dot}` }}
+                  />
+                  <span
+                    className={`font-mono text-lg font-semibold tabular transition-colors duration-300 sm:text-xl ${
+                      isActive ? "text-accent-2" : "text-faint/70"
+                    }`}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="flex-1">
+                    <span
+                      className={`block text-lg font-semibold tracking-tight transition-colors duration-300 ${
+                        isActive ? "text-ink" : "text-fog"
+                      }`}
+                    >
+                      {layer.name}
+                    </span>
+                    <span
+                      className={`mt-1 block text-[0.9375rem] leading-relaxed transition-colors duration-300 ${
+                        isActive ? "text-fog" : "text-faint"
+                      }`}
+                    >
+                      {layer.desc}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </section>
   );
