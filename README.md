@@ -37,8 +37,9 @@ Colors and type come from the official branding card in `/assets`:
 
 ## Structure
 
-- `app/page.tsx` — hero (animated console mock), cloud marquee, six-layers
-  interactive, benefits bento, comparison, security, FAQ, final CTA
+- `app/page.tsx` — hero with outcome stat strip, cloud marquee, features
+  matrix, six-layers interactive, benefits stats, comparison, security, FAQ,
+  final CTA
 - `app/contact/page.tsx` — form (stub handler), Calendly embed, email/LinkedIn
 - `components/` — one file per section; `reveal.tsx` and `counter.tsx` are the
   shared animation primitives (both respect `prefers-reduced-motion`)

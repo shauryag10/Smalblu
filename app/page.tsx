@@ -1,8 +1,8 @@
 import { Hero } from "@/components/hero";
 import { Marquee } from "@/components/marquee";
+import { Features } from "@/components/features";
 import { Layers } from "@/components/layers";
-import { Bento } from "@/components/bento";
-import { Proof } from "@/components/proof";
+import { Benefits } from "@/components/benefits";
 import { Comparison } from "@/components/comparison";
 import { Security } from "@/components/security";
 import { Faq } from "@/components/faq";
@@ -13,9 +13,9 @@ export default function HomePage() {
     <>
       <Hero />
       <Marquee />
+      <Features />
       <Layers />
-      <Bento />
-      <Proof />
+      <Benefits />
       <Comparison />
       <Security />
       <Faq />

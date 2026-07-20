@@ -61,19 +61,21 @@ export function Security() {
           </p>
         </Reveal>
 
-        <div className="mt-12 grid gap-4 md:grid-cols-3 lg:mt-14">
-          {GUARANTEES.map((g, i) => (
-            <Reveal key={g.title} delay={i * 0.08}>
-              <article className="card card-hover h-full p-7">
-                <span className="flex h-13 w-13 items-center justify-center rounded-full bg-white text-[#0050d6] shadow-[0_10px_30px_-10px_rgba(240,247,252,0.4)]">
-                  {g.icon}
-                </span>
-                <h3 className="mt-6 text-lg font-semibold tracking-tight text-ink">{g.title}</h3>
-                <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-fog">{g.desc}</p>
-              </article>
-            </Reveal>
-          ))}
-        </div>
+        <Reveal delay={0.1} className="mt-12 lg:mt-14">
+          <div className="overflow-hidden rounded-[20px] border border-line">
+            <div className="grid gap-px bg-white/[0.07] md:grid-cols-3">
+              {GUARANTEES.map((g) => (
+                <article key={g.title} className="group bg-abyss p-7 transition-colors duration-300 hover:bg-[#060b14] sm:p-8">
+                  <span className="flex h-13 w-13 items-center justify-center rounded-full bg-white text-[#0050d6] shadow-[0_10px_30px_-10px_rgba(240,247,252,0.4)]">
+                    {g.icon}
+                  </span>
+                  <h3 className="mt-6 text-lg font-semibold tracking-tight text-ink">{g.title}</h3>
+                  <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-fog">{g.desc}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </Reveal>
 
         <Reveal delay={0.2} className="mt-10 flex flex-wrap items-center gap-3">
           {PILLS.map((pill) => (
