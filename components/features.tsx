@@ -164,42 +164,30 @@ function AnomalyViz() {
   );
 }
 
-function CompressionViz() {
+function EcosystemViz() {
   const reduce = useReducedMotion();
-  const before = [44, 44, 44, 44, 44, 44];
-  const after = [44, 44, 44];
+  const teams = ["DevOps", "FinOps", "CTOs & VPs", "Sustainability"];
   return (
-    <div className="flex w-full items-center justify-between gap-4" aria-hidden="true">
-      <div className="grid grid-cols-3 gap-1.5">
-        {before.map((_, i) => (
-          <motion.span
-            key={i}
-            className="h-[18px] w-[26px] rounded-[5px] border border-white/10 bg-white/[0.05]"
-            initial={reduce ? false : { opacity: 0, scale: 0.7 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.35, delay: i * 0.05, ease: EASE }}
-          />
-        ))}
-      </div>
-      <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 shrink-0 text-faint">
-        <path d="M4 12h16m0 0-6-6m6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-      <div className="flex flex-col items-center gap-2">
-        <div className="grid grid-cols-3 gap-1.5">
-          {after.map((_, i) => (
-            <motion.span
-              key={i}
-              className="h-[18px] w-[26px] rounded-[5px] border border-accent/50 bg-accent/20 shadow-[0_0_14px_-3px_rgba(0,94,255,0.6)]"
-              initial={reduce ? false : { opacity: 0, scale: 0.7 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.35, delay: 0.4 + i * 0.07, ease: EASE }}
-            />
-          ))}
-        </div>
-        <span className="font-mono text-[10px] text-accent-3">35 to 50% lighter</span>
-      </div>
+    <div className="grid w-full grid-cols-2 gap-1.5" aria-hidden="true">
+      {teams.map((team, i) => (
+        <motion.span
+          key={team}
+          className={`flex items-center justify-between gap-2 rounded-lg border px-2.5 py-2 ${
+            i === 1
+              ? "border-accent/45 bg-accent/[0.1] shadow-[0_0_16px_-4px_rgba(0,94,255,0.5)]"
+              : "border-white/10 bg-white/[0.04]"
+          }`}
+          initial={reduce ? false : { opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.12 + i * 0.08, ease: EASE }}
+        >
+          <span className={`truncate text-[11px] font-medium ${i === 1 ? "text-ink" : "text-fog"}`}>{team}</span>
+          <svg viewBox="0 0 14 14" fill="none" className={`h-3 w-3 shrink-0 ${i === 1 ? "text-accent-3" : "text-faint"}`}>
+            <path d="m2 9.5 3.2-3.4 2.4 2 4.4-4.6m0 0v3.2m0-3.2H8.8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </motion.span>
+      ))}
     </div>
   );
 }
@@ -320,9 +308,9 @@ export function Features() {
           <FeatureCard
             className="lg:col-span-3"
             delay={0.15}
-            title="Smart Compression"
-            desc="A proprietary engine that compresses and caches data intelligently."
-            visual={<CompressionViz />}
+            title="Data Ecosystem Intelligence"
+            desc="Actionable insights across data lakes, databases, and infrastructure. Each team sees what they own."
+            visual={<EcosystemViz />}
           />
           <FeatureCard
             className="lg:col-span-3"
