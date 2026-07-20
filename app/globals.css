@@ -1,0 +1,292 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "Cascadia Code", monospace;
+
+  /* smalBlu brand palette (from smalBlu Branding card) */
+  --color-night: #04080f; /* page background — near-black, blue-tinted */
+  --color-abyss: #020509; /* deepest background */
+  --color-navy: #001d34;
+  --color-ink: #eef3fa; /* primary text */
+  --color-fog: #94a2b8; /* secondary text */
+  --color-faint: #64748b; /* tertiary / decorative text */
+  --color-accent: #005eff; /* electric blue — CTAs, key numbers, glows */
+  --color-accent-2: #4096db; /* text-safe accent on dark */
+  --color-accent-3: #80b9e7; /* soft accent */
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-card: rgb(255 255 255 / 0.03);
+
+  --animate-marquee: marquee 42s linear infinite;
+  --animate-drift: drift 16s ease-in-out infinite alternate;
+  --animate-drift-2: drift2 20s ease-in-out infinite alternate;
+  --animate-pulse-dot: pulse-dot 2.2s ease-in-out infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes drift {
+    from {
+      transform: translate3d(-6%, -4%, 0) scale(1);
+    }
+    to {
+      transform: translate3d(6%, 5%, 0) scale(1.12);
+    }
+  }
+  @keyframes drift2 {
+    from {
+      transform: translate3d(5%, 3%, 0) scale(1.08);
+    }
+    to {
+      transform: translate3d(-5%, -5%, 0) scale(0.98);
+    }
+  }
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 0 0 rgb(0 94 255 / 0.5);
+    }
+    50% {
+      opacity: 0.75;
+      box-shadow: 0 0 0 5px rgb(0 94 255 / 0);
+    }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 92px;
+  }
+
+  body {
+    background-color: var(--color-night);
+    color: var(--color-ink);
+    font-feature-settings: "ss01" on;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: rgb(0 94 255 / 0.35);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent-2);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/* ---------- shared primitives ---------- */
+
+@layer components {
+.container-x {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 76rem;
+  padding-inline: 1.25rem;
+}
+@media (min-width: 640px) {
+  .container-x {
+    padding-inline: 2rem;
+  }
+}
+
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: 20px;
+  transition:
+    border-color 0.35s ease,
+    background-color 0.35s ease,
+    box-shadow 0.35s ease,
+    transform 0.35s ease;
+}
+.card-hover:hover {
+  border-color: rgb(0 94 255 / 0.35);
+  background: rgb(255 255 255 / 0.045);
+  box-shadow:
+    0 0 0 1px rgb(0 94 255 / 0.08),
+    0 18px 50px -18px rgb(0 94 255 / 0.25);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1;
+  min-height: 48px;
+  padding-inline: 1.625rem;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+.btn-primary {
+  background: var(--color-accent);
+  color: #fff;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    0 10px 30px -10px rgb(0 94 255 / 0.65);
+}
+.btn-primary:hover {
+  background: #1a6eff;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.25),
+    0 14px 40px -10px rgb(0 94 255 / 0.85);
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: translateY(0);
+}
+.btn-ghost {
+  border: 1px solid rgb(255 255 255 / 0.14);
+  color: var(--color-ink);
+  background: rgb(255 255 255 / 0.02);
+}
+.btn-ghost:hover {
+  border-color: rgb(0 94 255 / 0.55);
+  background: rgb(0 94 255 / 0.08);
+}
+
+/* plain bold kicker, deck-style (no pill chrome) */
+.kicker {
+  display: block;
+  color: var(--color-accent-2);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.kicker-on-blue {
+  color: #fff;
+  opacity: 0.92;
+}
+
+/* flat accent word inside headlines, like the deck's two-tone titles */
+.accent-word {
+  color: #4d9aff;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #fff 30%, #80b9e7 70%, #4096db 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.stat-gradient {
+  background: linear-gradient(180deg, #9cc6ff 0%, #005eff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* solid brand surfaces from the deck system */
+.panel-blue {
+  background: linear-gradient(180deg, #0068c9 0%, #005eff 100%);
+  color: #fff;
+}
+.panel-light {
+  background: #f0f7fc;
+  color: #001d34;
+}
+
+.btn-white {
+  background: #fff;
+  color: #0050d6;
+  box-shadow: 0 14px 40px -12px rgb(0 15 26 / 0.45);
+}
+.btn-white:hover {
+  background: #eaf3ff;
+  transform: translateY(-1px);
+}
+.btn-ghost-white {
+  border: 1px solid rgb(255 255 255 / 0.45);
+  color: #fff;
+  background: transparent;
+}
+.btn-ghost-white:hover {
+  background: rgb(255 255 255 / 0.1);
+  border-color: rgb(255 255 255 / 0.7);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ambient dot texture */
+.texture-dots {
+  background-image: radial-gradient(rgb(255 255 255 / 0.055) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, black 30%, transparent 75%);
+}
+
+/* soft radial glow orbs (animated via --animate-drift) */
+.glow-orb {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, rgb(0 94 255 / 0.28), rgb(0 94 255 / 0.07) 55%, transparent 72%);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* marquee */
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+.marquee-track {
+  animation: var(--animate-marquee);
+}
+.marquee-mask:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.logo-cell {
+  filter: grayscale(1) brightness(1.4);
+  opacity: 0.45;
+  transition:
+    filter 0.35s ease,
+    opacity 0.35s ease;
+}
+.logo-cell:hover {
+  filter: none;
+  opacity: 1;
+}
+
+/* dashboard scanline shimmer on the mock chart */
+.chart-grid line {
+  stroke: rgb(255 255 255 / 0.06);
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .marquee-track {
+    animation: none !important;
+  }
+  .glow-orb {
+    will-change: auto;
+  }
+}
