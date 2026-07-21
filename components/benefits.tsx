@@ -242,45 +242,91 @@ function CostReductionChart() {
   );
 }
 
-/** 250° arc gauge, ~82% filled, glowing tip dot. */
+/**
+ * Atmospheric speedometer: gradient sweep arc (dim start, bright tip dot at
+ * ~92%), inner dial ring with radial ticks, faint needle, rolling wave
+ * baseline, and a dot-grid backdrop. Geometry: center (130,120), r=78,
+ * sweep 195° to -55° (250°), arc length 340.3.
+ */
 function PerformanceGauge() {
   const reduce = useReducedMotion();
-  const LEN = 305.4;
-  const REST = 55;
+  const LEN = 340.3;
+  const REST = LEN * 0.08; // 92% filled
+  const ARC = "M 54.7 140.2 A 78 78 0 1 1 174.7 183.9";
+  const polar = (r: number, deg: number) => ({
+    x: 130 + r * Math.cos((deg * Math.PI) / 180),
+    y: 120 - r * Math.sin((deg * Math.PI) / 180),
+  });
+  const ticks = Array.from({ length: 14 }, (_, i) => 195 - i * 19.2).map((deg) => ({
+    a: polar(58, deg),
+    b: polar(66, deg),
+  }));
   return (
-    <svg viewBox="0 0 180 180" className="h-[190px] w-[190px]" aria-hidden="true">
+    <svg viewBox="0 0 260 200" className="h-auto w-[250px] lg:w-[285px]" aria-hidden="true">
       <defs>
-        <linearGradient id="perf-gauge-grad" x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0%" stopColor="#0050d6" />
+        <linearGradient id="perf-gauge-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#16418f" />
+          <stop offset="55%" stopColor="#2f7fe0" />
           <stop offset="100%" stopColor="#5aa2ff" />
         </linearGradient>
+        <radialGradient id="perf-gauge-glow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="rgba(0,94,255,0.16)" />
+          <stop offset="100%" stopColor="rgba(0,94,255,0)" />
+        </radialGradient>
       </defs>
-      <path d="M 32.7 130.2 A 70 70 0 1 1 147.3 130.2" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="11" strokeLinecap="round" />
+
+      {/* ambient glow + dot-grid backdrop */}
+      <circle cx="130" cy="118" r="105" fill="url(#perf-gauge-glow)" />
+      {Array.from({ length: 5 }).flatMap((_, gx) =>
+        Array.from({ length: 7 }).map((_, gy) => (
+          <circle key={`${gx}-${gy}`} cx={196 + gx * 14} cy={52 + gy * 14} r="1.3" fill="#4d9aff" opacity="0.09" />
+        )),
+      )}
+
+      {/* rolling wave baseline */}
+      <path d="M0 176 C 42 164, 74 156, 112 170 S 192 188, 260 168" fill="none" stroke="rgba(255,255,255,0.09)" strokeWidth="1.2" />
+      <path d="M28 188 C 70 180, 120 176, 168 182 S 232 188, 260 184" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+
+      {/* inner dial ring + ticks */}
+      <path d="M 88.4 149.6 A 52 52 0 1 1 158.8 162.6" fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
+      {ticks.map((t, i) => (
+        <line key={i} x1={t.a.x} y1={t.a.y} x2={t.b.x} y2={t.b.y} stroke="rgba(255,255,255,0.11)" strokeWidth="1.4" />
+      ))}
+
+      {/* needle */}
+      <g opacity="0.55">
+        <line x1="130" y1="120" x2={polar(42, 150).x} y2={polar(42, 150).y} stroke="#35619f" strokeWidth="3" strokeLinecap="round" />
+        <circle cx="130" cy="120" r="4.5" fill="#101f38" stroke="rgba(255,255,255,0.14)" strokeWidth="1" />
+      </g>
+
+      {/* faint unfilled tail */}
+      <path d={ARC} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" strokeLinecap="round" />
+
+      {/* main sweep */}
       <motion.path
-        d="M 32.7 130.2 A 70 70 0 1 1 147.3 130.2"
+        d={ARC}
         fill="none"
         stroke="url(#perf-gauge-grad)"
-        strokeWidth="11"
+        strokeWidth="9"
         strokeLinecap="round"
         strokeDasharray={LEN}
-        style={{ filter: "drop-shadow(0 0 10px rgba(0,94,255,0.5))" }}
+        style={{ filter: "drop-shadow(0 0 12px rgba(0,94,255,0.55))" }}
         initial={reduce ? { strokeDashoffset: REST } : { strokeDashoffset: LEN }}
         whileInView={{ strokeDashoffset: REST }}
         viewport={{ once: true }}
-        transition={{ duration: 1.5, delay: 0.35, ease: EASE }}
+        transition={{ duration: 1.6, delay: 0.35, ease: EASE }}
       />
-      <motion.circle
-        cx="158.9"
-        cy="77.8"
-        r="4.5"
-        fill="#9cc6ff"
-        style={{ filter: "drop-shadow(0 0 8px rgba(90,162,255,0.95))" }}
+
+      {/* glowing tip dot at the 92% point (-35°) */}
+      <motion.g
         initial={reduce ? { opacity: 1 } : { opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.4, delay: 1.55 }}
-      />
-      <line x1="40" y1="158" x2="140" y2="158" stroke="rgba(255,255,255,0.09)" strokeWidth="1" strokeDasharray="2 6" />
+        transition={{ duration: 0.4, delay: 1.7 }}
+      >
+        <circle cx="193.9" cy="164.7" r="9" fill="rgba(90,162,255,0.25)" />
+        <circle cx="193.9" cy="164.7" r="5" fill="#9cc6ff" style={{ filter: "drop-shadow(0 0 10px rgba(90,162,255,1))" }} />
+      </motion.g>
     </svg>
   );
 }
