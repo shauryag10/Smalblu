@@ -382,25 +382,75 @@ function DotGridPattern() {
   );
 }
 
-/** Concentric dotted quarter-arcs clipped to the sustainability panel's right edge. */
-function EcoArcPattern() {
-  const dots: { x: number; y: number; o: number }[] = [];
-  const CX = 252;
-  const CY = 210;
-  [72, 108, 144, 180].forEach((radius, ring) => {
-    for (let a = 118; a <= 242; a += 8) {
-      const rad = (a * Math.PI) / 180;
-      const x = CX + radius * Math.cos(rad);
-      const y = CY + radius * Math.sin(rad);
-      if (x > 4 && y > 8 && y < 412) dots.push({ x, y, o: 0.34 - ring * 0.055 });
+/**
+ * Dotted Earth bleeding off the panel's right edge: orthographic projection
+ * centered on the Atlantic, faint ocean dots forming the sphere and brighter
+ * dots where samples fall inside rough continent outlines.
+ */
+const CONTINENTS: [number, number][][] = [
+  // North America
+  [[70, -165], [72, -120], [68, -90], [60, -65], [48, -52], [25, -80], [15, -95], [20, -105], [30, -115], [40, -125], [55, -165]],
+  // Greenland
+  [[83, -60], [76, -20], [68, -30], [70, -55]],
+  // South America
+  [[10, -75], [5, -50], [-5, -35], [-25, -40], [-40, -62], [-55, -70], [-20, -70], [0, -80]],
+  // Europe
+  [[70, -10], [70, 40], [55, 45], [45, 30], [36, -5], [43, -10], [58, -5]],
+  // Africa
+  [[35, -8], [32, 32], [12, 44], [-5, 40], [-35, 20], [-33, 17], [-5, 10], [5, -10], [15, -17]],
+  // Asia
+  [[75, 60], [70, 120], [65, 150], [60, 160], [50, 135], [35, 120], [20, 105], [8, 100], [15, 75], [25, 60], [45, 45], [55, 45], [65, 45]],
+  // Australia
+  [[-12, 130], [-15, 145], [-30, 153], [-37, 145], [-33, 132], [-25, 115], [-18, 122]],
+];
+
+function inPolygon(lat: number, lon: number, poly: [number, number][]) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [yi, xi] = poly[i];
+    const [yj, xj] = poly[j];
+    if (yi > lat !== yj > lat && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+function EarthDotPattern() {
+  const D = Math.PI / 180;
+  const lat0 = 10 * D;
+  const lon0 = -25 * D;
+  const R = 150;
+  const CX = 172;
+  const CY = 152;
+  const dots: { x: number; y: number; land: boolean; fade: number }[] = [];
+  for (let lat = -88; lat <= 88; lat += 4) {
+    for (let lon = -180; lon < 180; lon += 4) {
+      const p = lat * D;
+      const l = lon * D;
+      const cosc = Math.sin(lat0) * Math.sin(p) + Math.cos(lat0) * Math.cos(p) * Math.cos(l - lon0);
+      if (cosc < 0.03) continue; // back hemisphere
+      const x = CX + R * Math.cos(p) * Math.sin(l - lon0);
+      const y = CY - R * (Math.cos(lat0) * Math.sin(p) - Math.sin(lat0) * Math.cos(p) * Math.cos(l - lon0));
+      if (x > 186 || y < -6 || y > 326) continue; // outside visible window
+      // round everything we render: server and client trig can differ by an
+      // ulp, and full-precision floats would fail hydration
+      dots.push({
+        x: +x.toFixed(1),
+        y: +y.toFixed(1),
+        land: CONTINENTS.some((c) => inPolygon(lat, lon, c)),
+        fade: +cosc.toFixed(2),
+      });
     }
-  });
+  }
   return (
-    <div className="pointer-events-none absolute inset-y-0 right-0 w-[42%] overflow-hidden" aria-hidden="true">
-      <svg viewBox="0 0 220 420" className="absolute right-0 top-1/2 h-[105%] w-auto -translate-y-1/2" preserveAspectRatio="xMaxYMid meet">
-        {dots.map((d, i) => (
-          <circle key={i} cx={d.x} cy={d.y} r="1.8" fill="#4d9aff" opacity={d.o} />
-        ))}
+    <div className="pointer-events-none absolute inset-y-0 right-0 w-[56%] overflow-hidden" aria-hidden="true">
+      <svg viewBox="0 0 180 320" className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid slice">
+        {dots.map((d, i) =>
+          d.land ? (
+            <circle key={i} cx={d.x} cy={d.y} r="1.7" fill="#6db0ff" opacity={+(0.22 + 0.5 * d.fade).toFixed(2)} />
+          ) : (
+            <circle key={i} cx={d.x} cy={d.y} r="1.1" fill="#4d9aff" opacity={+(0.04 + 0.07 * d.fade).toFixed(2)} />
+          ),
+        )}
       </svg>
     </div>
   );
@@ -487,7 +537,7 @@ export function Benefits() {
             <BenefitCard benefit={perf} visual={<PerformanceGauge />} delay={0.08} />
             <div className="grid gap-4 sm:grid-cols-2">
               <BenefitCard benefit={prod} decoration={<DotGridPattern />} delay={0.14} />
-              <BenefitCard benefit={sust} decoration={<EcoArcPattern />} delay={0.2} />
+              <BenefitCard benefit={sust} decoration={<EarthDotPattern />} delay={0.2} />
             </div>
           </div>
         </div>
