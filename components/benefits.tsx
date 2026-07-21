@@ -78,10 +78,10 @@ const BENEFITS: Benefit[] = [
 function IconOrb({ children }: { children: React.ReactNode }) {
   return (
     <span className="relative inline-flex" aria-hidden="true">
-      <span className="absolute -inset-1.5 rounded-full border border-accent/15" />
+      <span className="absolute -inset-2 rounded-full border border-accent/20" />
       <span
-        className="flex h-14 w-14 items-center justify-center rounded-full border border-accent/30 text-accent-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_-6px_-8px_16px_rgba(0,94,255,0.22),0_0_28px_-8px_rgba(0,94,255,0.5)]"
-        style={{ background: "radial-gradient(circle at 30% 25%, #1c3054 0%, #0a1424 62%)" }}
+        className="flex h-16 w-16 items-center justify-center rounded-full border border-accent/40 text-[#8fc0ff] shadow-[inset_0_1px_0_rgba(255,255,255,0.16),inset_-7px_-9px_18px_rgba(0,94,255,0.32),0_0_36px_-8px_rgba(0,94,255,0.7)] [&>svg]:h-7 [&>svg]:w-7"
+        style={{ background: "radial-gradient(circle at 30% 25%, #234170 0%, #0b1628 62%)" }}
       >
         {children}
       </span>
@@ -94,7 +94,7 @@ function MetricProgress({ value, delay = 0.3, className }: { value: number; dela
   const reduce = useReducedMotion();
   return (
     <div className={`flex items-center gap-3 ${className ?? ""}`} aria-hidden="true">
-      <div className="relative h-[5px] w-full max-w-[210px] rounded-full bg-white/[0.1]">
+      <div className="relative h-[6px] w-full max-w-[240px] rounded-full bg-white/[0.12]">
         <motion.div
           className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-accent to-[#5aa2ff]"
           initial={reduce ? { width: `${value}%` } : { width: "3%" }}
@@ -119,12 +119,12 @@ function BenefitContent({ benefit, big, delay }: { benefit: Benefit; big?: boole
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-accent-2">{benefit.category}</p>
       </div>
       <p
-        className={`mt-7 font-semibold leading-none tracking-[-0.03em] text-ink tabular ${
-          big ? "text-[4.75rem] sm:text-[5.75rem]" : "text-[3.4rem]"
+        className={`mt-7 font-semibold leading-none tracking-[-0.03em] text-ink tabular [text-shadow:0_0_38px_rgba(0,94,255,0.4)] ${
+          big ? "text-[4.75rem] sm:text-[6.25rem]" : "text-[4rem]"
         }`}
       >
         <Counter to={benefit.value} duration={1.6} delay={delay} />
-        <span className="text-accent-2">%</span>
+        <span className="text-[#4d9aff]">%</span>
       </p>
       <MetricProgress value={benefit.value} delay={delay + 0.15} className="mt-6" />
       <h3 className={`mt-7 font-semibold tracking-tight text-ink ${big ? "text-2xl" : "text-xl"}`}>
@@ -147,13 +147,20 @@ function CardFrame({
 }) {
   return (
     <article
-      className={`group relative h-full overflow-hidden rounded-[22px] border transition-all duration-400 motion-safe:hover:-translate-y-1 ${
+      className={`group relative h-full overflow-hidden rounded-[24px] border transition-all duration-400 motion-safe:hover:-translate-y-1 ${
         featured
-          ? "border-accent/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_0_60px_-24px_rgba(0,94,255,0.4)] hover:border-accent/50 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_18px_70px_-24px_rgba(0,94,255,0.5)]"
-          : "border-accent/[0.14] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] hover:border-accent/35 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_16px_50px_-22px_rgba(0,94,255,0.4)]"
+          ? "border-accent/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.09),0_0_90px_-24px_rgba(0,94,255,0.6)] hover:border-accent/60 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.09),0_24px_100px_-24px_rgba(0,94,255,0.7)]"
+          : "border-accent/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_55px_-24px_rgba(0,94,255,0.4)] hover:border-accent/45 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_70px_-24px_rgba(0,94,255,0.55)]"
       } ${className ?? ""}`}
-      style={{ background: "linear-gradient(160deg, #0b1526 0%, #060c18 55%, #050a13 100%)" }}
+      style={{ background: "linear-gradient(160deg, #0d1a30 0%, #071021 55%, #050b16 100%)" }}
     >
+      {/* luminous corner wash */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute -left-28 -top-28 h-80 w-80 rounded-full blur-[90px] transition-opacity duration-500 ${
+          featured ? "bg-accent/[0.2]" : "bg-accent/[0.13]"
+        } opacity-90 group-hover:opacity-100`}
+      />
       {children}
     </article>
   );
@@ -170,7 +177,7 @@ function CostReductionChart() {
       <svg viewBox="0 0 340 520" preserveAspectRatio="none" className="h-full w-full">
         <defs>
           <linearGradient id="cost-chart-area" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgba(0,94,255,0.22)" />
+            <stop offset="0%" stopColor="rgba(0,94,255,0.32)" />
             <stop offset="85%" stopColor="rgba(0,94,255,0)" />
           </linearGradient>
         </defs>
@@ -188,8 +195,8 @@ function CostReductionChart() {
         <motion.path
           d={line}
           fill="none"
-          stroke="#3b82ff"
-          strokeWidth="2.6"
+          stroke="#4d9aff"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
           vectorEffect="non-scaling-stroke"
@@ -209,8 +216,15 @@ function CostReductionChart() {
         viewport={{ once: true }}
         transition={{ duration: 0.4, delay: 1.2 }}
       >
+        {!reduce && (
+          <motion.span
+            className="absolute h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#5aa2ff]/70"
+            animate={{ scale: [1, 1.9], opacity: [0.8, 0] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
+          />
+        )}
         <span className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#5aa2ff]/60 p-2" />
-        <span className="absolute h-[7px] w-[7px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#9cc6ff] shadow-[0_0_10px_rgba(90,162,255,0.95)]" />
+        <span className="absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#9cc6ff] shadow-[0_0_12px_rgba(90,162,255,1)]" />
       </motion.span>
       <motion.span
         className="absolute bottom-[9%] left-1/2 inline-flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-[#0b1628]/90 px-3.5 py-1.5 text-[12px] font-medium text-fog backdrop-blur-sm"
@@ -234,7 +248,7 @@ function PerformanceGauge() {
   const LEN = 305.4;
   const REST = 55;
   return (
-    <svg viewBox="0 0 180 180" className="h-[168px] w-[168px]" aria-hidden="true">
+    <svg viewBox="0 0 180 180" className="h-[190px] w-[190px]" aria-hidden="true">
       <defs>
         <linearGradient id="perf-gauge-grad" x1="0" y1="1" x2="1" y2="0">
           <stop offset="0%" stopColor="#0050d6" />
@@ -321,7 +335,7 @@ function FeaturedBenefitCard({ benefit }: { benefit: Benefit }) {
   return (
     <Reveal className="h-full">
       <CardFrame featured>
-        <div className="grid h-full gap-8 p-7 sm:p-9 lg:grid-cols-[1fr_0.82fr]">
+        <div className="grid h-full gap-8 p-8 sm:p-10 lg:grid-cols-[1fr_0.82fr]">
           <div>
             <BenefitContent benefit={benefit} big delay={0.2} />
           </div>
@@ -349,7 +363,7 @@ function BenefitCard({
     <Reveal delay={delay} className="h-full">
       <CardFrame>
         {decoration}
-        <div className="relative flex items-center gap-8 p-7 sm:p-8">
+        <div className="relative flex items-center gap-8 p-8">
           <div className="min-w-0 flex-1">
             <BenefitContent benefit={benefit} delay={delay + 0.3} />
           </div>
