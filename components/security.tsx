@@ -4,126 +4,174 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/reveal";
 import { LogoMark } from "@/components/logo";
 
-const stroke = { strokeWidth: 1.5, strokeLinecap: "round", strokeLinejoin: "round" } as const;
+const EASE = [0.22, 0.61, 0.36, 1] as const;
 
-const GUARANTEES = [
+/**
+ * Concentric arc diagram: three guarantees as gradient bands fanning out
+ * from the smalBlu mark. Callouts connect to the bands with leader lines.
+ * Geometry lives in a 1000x620 viewBox, center (500,560).
+ */
+const ARCS = [
   {
+    num: "01",
     title: "Security Guardrails",
-    desc: "Human-in-the-loop approval on every change, a full audit trail of every action, and one-click rollback if you ever want it undone.",
-    icon: (
-      <svg viewBox="0 0 28 28" fill="none" className="h-6 w-6" aria-hidden="true">
-        <path d="M14 3 5 6.5v6.2c0 5.7 3.8 9.9 9 11.8 5.2-1.9 9-6.1 9-11.8V6.5L14 3z" stroke="currentColor" {...stroke} />
-        <path d="m10.2 13.9 2.7 2.7 5-5.3" stroke="currentColor" {...stroke} />
-      </svg>
-    ),
+    desc: "Human approval on every change, a full audit trail, and one-click rollback.",
+    r: 150,
+    end: 0, // degrees
+    length: 471.3,
+    from: "#005eff",
+    to: "#9cc6ff",
+    delay: 0.1,
   },
   {
+    num: "02",
     title: "Zero Data Movement",
-    desc: "SmalBlu deploys inside your environment on open-source models. Your workload data never crosses your network perimeter. Nothing leaves, ever.",
-    icon: (
-      <svg viewBox="0 0 28 28" fill="none" className="h-6 w-6" aria-hidden="true">
-        <circle cx="14" cy="14" r="10.5" stroke="currentColor" strokeDasharray="3.2 3.6" {...stroke} />
-        <rect x="10.5" y="12" width="7" height="6" rx="1.5" stroke="currentColor" {...stroke} />
-        <path d="M11.8 12v-1.8a2.2 2.2 0 0 1 4.4 0V12" stroke="currentColor" {...stroke} />
-      </svg>
-    ),
+    desc: "Deployed inside your environment. Workload data never leaves your perimeter.",
+    r: 220,
+    end: 25,
+    length: 595.2,
+    from: "#0050d6",
+    to: "#5aa2ff",
+    delay: 0.25,
   },
   {
+    num: "03",
     title: "Metadata-Only Access",
-    desc: "Agents read performance metrics and configuration metadata, never your actual workload data. Aligned with CISO security frameworks and vendor compliance matrices.",
-    icon: (
-      <svg viewBox="0 0 28 28" fill="none" className="h-6 w-6" aria-hidden="true">
-        <path d="M16.5 3.5H8a2 2 0 0 0-2 2v17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-5.5-5.5z" stroke="currentColor" {...stroke} />
-        <path d="M16.5 3.5V9H22" stroke="currentColor" {...stroke} />
-        <path d="M9.5 14h4M9.5 17.5h6.5M9.5 21h5" stroke="currentColor" {...stroke} />
-        <circle cx="17.8" cy="14.2" r="0.9" fill="currentColor" />
-      </svg>
-    ),
+    desc: "Agents read metrics and configuration metadata, never your workload data.",
+    r: 290,
+    end: 50,
+    length: 658.1,
+    from: "#003967",
+    to: "#4096db",
+    delay: 0.4,
   },
+];
+
+const CX = 500;
+const CY = 560;
+const rad = (deg: number) => (deg * Math.PI) / 180;
+const pt = (r: number, deg: number) => ({
+  x: CX + r * Math.cos(rad(deg)),
+  y: CY - r * Math.sin(rad(deg)),
+});
+
+function arcPath(r: number, endDeg: number) {
+  const start = pt(r, 180);
+  const end = pt(r, endDeg);
+  return `M ${start.x.toFixed(1)} ${start.y.toFixed(1)} A ${r} ${r} 0 0 1 ${end.x.toFixed(1)} ${end.y.toFixed(1)}`;
+}
+
+// leader lines: [x1, y1, x2, y2]
+const LEADERS = [
+  { line: [677, 560, 818, 560], dot: [818, 560] }, // 01: horizontal, from inner arc end
+  { line: [705, 452, 705, 318], dot: [705, 452] }, // 02: vertical, from middle arc end region
+  { line: [377, 288, 377, 148], dot: [377, 288] }, // 03: vertical, from outer arc upper-left
 ];
 
 const PILLS = ["End-to-End Encrypted", "Role-Based Access", "Human Approval"];
 
-/**
- * Perimeter diagram: workload data locked inside the network perimeter,
- * agents outside receiving only metadata across the boundary.
- */
-function PerimeterViz() {
+function ArcDiagram() {
   const reduce = useReducedMotion();
-  // agent chip centers in the 440x440 coordinate space
-  const agents = [
-    { x: 415, y: 45, boundary: { x: 364, y: 90.7 } },
-    { x: 28, y: 368, boundary: { x: 66.6, y: 338.1 } },
-  ];
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[440px]" aria-hidden="true">
-      {/* perimeter rings */}
-      <div className="absolute inset-[6%] rounded-full border border-dashed border-white/20" />
-      <div className="absolute inset-[24%] rounded-full border border-white/[0.07]" />
-      <div className="absolute inset-[40%] rounded-full border border-white/[0.07]" />
+    <div className="relative mx-auto w-full max-w-[980px]">
+      <svg
+        viewBox="0 0 1000 620"
+        className="h-auto w-full"
+        role="img"
+        aria-label="Three security guarantees fanning out from the SmalBlu mark: security guardrails, zero data movement, and metadata-only access"
+      >
+        <defs>
+          {ARCS.map((a) => {
+            const s = pt(a.r, 180);
+            const e = pt(a.r, a.end);
+            return (
+              <linearGradient
+                key={a.num}
+                id={`arc-${a.num}`}
+                gradientUnits="userSpaceOnUse"
+                x1={s.x}
+                y1={s.y}
+                x2={e.x}
+                y2={e.y}
+              >
+                <stop offset="0%" stopColor={a.from} />
+                <stop offset="100%" stopColor={a.to} />
+              </linearGradient>
+            );
+          })}
+        </defs>
 
-      {/* perimeter label */}
-      <span className="absolute left-1/2 top-[6%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-abyss px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
-        network perimeter
-      </span>
+        {/* baseline horizon */}
+        <line x1="130" y1="560" x2="870" y2="560" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
 
-      {/* metadata flow lines */}
-      <svg viewBox="0 0 440 440" className="absolute inset-0 h-full w-full">
-        {agents.map((a, i) => (
-          <motion.line
-            key={i}
-            x1={a.boundary.x}
-            y1={a.boundary.y}
-            x2={a.x}
-            y2={a.y}
-            stroke="rgba(64,150,219,0.55)"
-            strokeWidth="1.4"
-            strokeDasharray="4 6"
-            initial={false}
-            animate={reduce ? {} : { strokeDashoffset: [0, -40] }}
-            transition={{ duration: 2.2, repeat: Infinity, ease: "linear" }}
+        {/* gradient bands */}
+        {ARCS.map((a) => (
+          <motion.path
+            key={a.num}
+            d={arcPath(a.r, a.end)}
+            fill="none"
+            stroke={`url(#arc-${a.num})`}
+            strokeWidth="54"
+            style={{ filter: "drop-shadow(0 0 22px rgba(0,94,255,0.3))" }}
+            strokeDasharray={a.length}
+            initial={reduce ? { strokeDashoffset: 0 } : { strokeDashoffset: a.length }}
+            whileInView={{ strokeDashoffset: 0 }}
+            viewport={{ once: true, margin: "0px 0px -80px 0px" }}
+            transition={{ duration: 1.3, delay: a.delay, ease: EASE }}
           />
         ))}
-        {/* boundary crossing markers */}
-        {agents.map((a, i) => (
-          <circle key={`m${i}`} cx={a.boundary.x} cy={a.boundary.y} r="3.4" fill="#04080f" stroke="#4096db" strokeWidth="1.4" />
+
+        {/* leader lines + dots */}
+        {LEADERS.map((l, i) => (
+          <motion.g
+            key={i}
+            initial={reduce ? { opacity: 1 } : { opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 1 + i * 0.15 }}
+          >
+            <line
+              x1={l.line[0]}
+              y1={l.line[1]}
+              x2={l.line[2]}
+              y2={l.line[3]}
+              stroke="rgba(255,255,255,0.35)"
+              strokeWidth="1"
+            />
+            <circle cx={l.dot[0]} cy={l.dot[1]} r="3.2" fill="#04080f" stroke="rgba(255,255,255,0.6)" strokeWidth="1.2" />
+          </motion.g>
         ))}
       </svg>
 
-      {/* agent chips outside the perimeter */}
-      {agents.map((a, i) => (
-        <span
-          key={i}
-          className="absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl border border-accent/40 bg-[#070d18] text-accent shadow-[0_0_20px_-4px_rgba(0,94,255,0.55)]"
-          style={{ left: `${(a.x / 440) * 100}%`, top: `${(a.y / 440) * 100}%` }}
-        >
-          <LogoMark className="h-4 w-auto" />
-        </span>
-      ))}
+      {/* center mark */}
+      <div
+        className="absolute flex h-[72px] w-[72px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-accent/45 bg-[#070d18] shadow-[0_0_36px_-6px_rgba(0,94,255,0.7)]"
+        style={{ left: "50%", top: `${(CY / 620) * 100}%` }}
+        aria-hidden="true"
+      >
+        <LogoMark className="h-6 w-auto text-accent" />
+      </div>
 
-      {/* metadata tag on the upper flow */}
-      <span className="absolute left-[84%] top-[20%] -translate-x-1/2 rounded-md border border-accent/30 bg-accent/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-accent-3">
-        metadata only
-      </span>
-
-      {/* center: locked workload data */}
-      <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
-        {!reduce && (
-          <motion.span
-            className="absolute top-[42px] h-[84px] w-[84px] -translate-y-1/2 rounded-2xl border border-accent/30"
-            animate={{ scale: [1, 1.35], opacity: [0.55, 0] }}
-            transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut" }}
-          />
-        )}
-        <span className="flex h-[84px] w-[84px] items-center justify-center rounded-2xl border border-white/15 bg-gradient-to-b from-[#0b1424] to-[#060b14] shadow-[0_20px_50px_-16px_rgba(0,0,0,0.8)]">
-          <svg viewBox="0 0 28 28" fill="none" className="h-8 w-8 text-ink" aria-hidden="true">
-            <rect x="7" y="12.5" width="14" height="10.5" rx="2.5" stroke="currentColor" {...stroke} />
-            <path d="M9.8 12.5V9.3a4.2 4.2 0 0 1 8.4 0v3.2" stroke="currentColor" {...stroke} />
-            <circle cx="14" cy="17.8" r="1.6" fill="currentColor" />
-          </svg>
-        </span>
-        <p className="mt-3 text-[13px] font-semibold text-ink">Your workload data</p>
-        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">never leaves</p>
+      {/* desktop callouts */}
+      <div className="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden="true">
+        {/* 01: right of the horizontal leader */}
+        <div className="absolute w-[168px] -translate-y-1/2" style={{ left: "83.5%", top: "90.3%" }}>
+          <p className="font-mono text-lg font-semibold text-accent-3">01</p>
+          <h3 className="mt-1 text-[15px] font-semibold leading-snug text-ink">{ARCS[0].title}</h3>
+          <p className="mt-1 text-[13px] leading-relaxed text-fog">{ARCS[0].desc}</p>
+        </div>
+        {/* 02: above its vertical leader */}
+        <div className="absolute w-[230px] -translate-x-1/2 -translate-y-full pb-2" style={{ left: "70.5%", top: "51.3%" }}>
+          <p className="font-mono text-lg font-semibold text-accent-3">02</p>
+          <h3 className="mt-1 text-[15px] font-semibold leading-snug text-ink">{ARCS[1].title}</h3>
+          <p className="mt-1 text-[13px] leading-relaxed text-fog">{ARCS[1].desc}</p>
+        </div>
+        {/* 03: above its vertical leader */}
+        <div className="absolute w-[230px] -translate-x-1/2 -translate-y-full pb-2" style={{ left: "37.7%", top: "23.9%" }}>
+          <p className="font-mono text-lg font-semibold text-accent-3">03</p>
+          <h3 className="mt-1 text-[15px] font-semibold leading-snug text-ink">{ARCS[2].title}</h3>
+          <p className="mt-1 text-[13px] leading-relaxed text-fog">{ARCS[2].desc}</p>
+        </div>
       </div>
     </div>
   );
@@ -137,43 +185,36 @@ export function Security() {
       aria-labelledby="security-heading"
     >
       <div className="container-x">
-        <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
-          {/* left: header + guarantees */}
-          <div>
-            <Reveal>
-              <p className="kicker">Security</p>
-              <h2
-                id="security-heading"
-                className="mt-4 text-balance text-4xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl"
-              >
-                Enterprise-Grade <span className="accent-word">Security</span>
-              </h2>
-              <p className="mt-5 text-lg leading-relaxed text-fog">
-                Three guarantees built into every deployment.
-              </p>
+        <Reveal className="mx-auto max-w-3xl text-center">
+          <p className="kicker">Security</p>
+          <h2
+            id="security-heading"
+            className="mt-4 text-balance text-4xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl"
+          >
+            Enterprise-Grade <span className="accent-word">Security</span>
+          </h2>
+          <p className="mt-5 text-lg leading-relaxed text-fog">
+            Three guarantees built into every deployment.
+          </p>
+        </Reveal>
+
+        <Reveal delay={0.1} className="mt-14 lg:mt-16">
+          <ArcDiagram />
+        </Reveal>
+
+        {/* mobile callouts */}
+        <div className="mx-auto mt-10 grid max-w-xl gap-6 lg:hidden">
+          {ARCS.map((a) => (
+            <Reveal key={a.num}>
+              <div className="flex gap-4">
+                <p className="font-mono text-lg font-semibold text-accent-3">{a.num}</p>
+                <div>
+                  <h3 className="text-base font-semibold tracking-tight text-ink">{a.title}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-fog">{a.desc}</p>
+                </div>
+              </div>
             </Reveal>
-
-            <div className="mt-10">
-              {GUARANTEES.map((g, i) => (
-                <Reveal key={g.title} delay={0.08 + i * 0.08}>
-                  <article className={`flex gap-5 py-6 ${i > 0 ? "border-t border-line" : ""}`}>
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-[#0050d6] shadow-[0_10px_30px_-10px_rgba(240,247,252,0.4)]">
-                      {g.icon}
-                    </span>
-                    <div>
-                      <h3 className="text-lg font-semibold tracking-tight text-ink">{g.title}</h3>
-                      <p className="mt-1.5 text-[0.9375rem] leading-relaxed text-fog">{g.desc}</p>
-                    </div>
-                  </article>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-
-          {/* right: perimeter diagram */}
-          <Reveal delay={0.15}>
-            <PerimeterViz />
-          </Reveal>
+          ))}
         </div>
 
         {/* trust strip */}
