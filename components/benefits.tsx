@@ -171,46 +171,72 @@ function CardFrame({
 /** Descending cloud-waste line in a tall 340x520 space (matches its region, no distortion). */
 function CostReductionChart() {
   const reduce = useReducedMotion();
-  const line = "M24 56 L104 148 L96 134 L180 248 L172 234 L252 352 L244 338 L312 452";
+  // smooth rolling descent through on-curve nodes; dot sits on the (196,224) node
+  const line =
+    "M18 42 C 48 44, 72 58, 96 84 S 128 128, 148 156 S 176 196, 196 224 S 224 276, 240 304 S 268 356, 284 388 S 306 436, 322 468";
   return (
     <div className="relative h-full min-h-[300px] w-full" aria-hidden="true">
       <svg viewBox="0 0 340 520" preserveAspectRatio="none" className="h-full w-full">
         <defs>
           <linearGradient id="cost-chart-area" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgba(0,94,255,0.32)" />
-            <stop offset="85%" stopColor="rgba(0,94,255,0)" />
+            <stop offset="0%" stopColor="rgba(0,94,255,0.16)" />
+            <stop offset="55%" stopColor="rgba(0,94,255,0)" />
           </linearGradient>
         </defs>
-        {[100, 186, 272].map((x) => (
-          <line key={x} x1={x} y1="30" x2={x} y2="500" stroke="rgba(255,255,255,0.06)" strokeWidth="1" strokeDasharray="2 7" />
+        {/* dotted gridline columns */}
+        {[76, 140, 204, 268].map((x) => (
+          <line
+            key={x}
+            x1={x}
+            y1="34"
+            x2={x}
+            y2="496"
+            stroke="rgba(120,170,255,0.14)"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeDasharray="1.5 9"
+          />
         ))}
         <motion.path
-          d={`${line} L312 520 L24 520 Z`}
+          d={`${line} L322 520 L18 520 Z`}
           fill="url(#cost-chart-area)"
           initial={reduce ? { opacity: 1 } : { opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, delay: 1.1 }}
         />
+        {/* halo under-stroke */}
         <motion.path
           d={line}
           fill="none"
-          stroke="#4d9aff"
+          stroke="rgba(90,162,255,0.22)"
+          strokeWidth="9"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+          initial={reduce ? { pathLength: 1 } : { pathLength: 0 }}
+          whileInView={{ pathLength: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.7, delay: 0.3, ease: "easeInOut" }}
+        />
+        <motion.path
+          d={line}
+          fill="none"
+          stroke="#5aa2ff"
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
           vectorEffect="non-scaling-stroke"
-          style={{ filter: "drop-shadow(0 0 8px rgba(0,94,255,0.6))" }}
+          style={{ filter: "drop-shadow(0 0 10px rgba(0,94,255,0.7))" }}
           initial={reduce ? { pathLength: 1 } : { pathLength: 0 }}
           whileInView={{ pathLength: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1.7, delay: 0.3, ease: "easeInOut" }}
         />
       </svg>
-      {/* glowing point on the P4 vertex (172,234 of 340x520) */}
+      {/* glowing point on the (196,224) node */}
       <motion.span
         className="absolute"
-        style={{ left: "50.6%", top: "45%" }}
+        style={{ left: "57.6%", top: "43.1%" }}
         initial={reduce ? { opacity: 1 } : { opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -381,7 +407,7 @@ function FeaturedBenefitCard({ benefit }: { benefit: Benefit }) {
   return (
     <Reveal className="h-full">
       <CardFrame featured>
-        <div className="grid h-full gap-8 p-8 sm:p-10 lg:grid-cols-[1fr_0.82fr]">
+        <div className="grid h-full gap-8 p-8 sm:p-10 lg:grid-cols-[1fr_0.9fr]">
           <div>
             <BenefitContent benefit={benefit} big delay={0.2} />
           </div>
