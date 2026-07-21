@@ -7,7 +7,73 @@ import { Reveal } from "@/components/reveal";
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 const stroke = { strokeWidth: 1.5, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 
-/* ---------- shared pieces ---------- */
+/* ---------------- data ---------------- */
+
+type Benefit = {
+  key: "cost" | "perf" | "prod" | "sust";
+  category: string;
+  value: number;
+  label: string;
+  desc: string;
+  icon: React.ReactNode;
+};
+
+const BENEFITS: Benefit[] = [
+  {
+    key: "cost",
+    category: "Cost efficiency",
+    value: 40,
+    label: "Lower cloud spend",
+    desc: "Continuous cross-layer optimization eliminates waste the moment an agent finds it.",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" {...stroke} />
+        <path d="M14.8 8.8c-.5-.9-1.6-1.4-2.8-1.4-1.7 0-3 .9-3 2.2 0 2.9 6 1.5 6 4.4 0 1.3-1.3 2.2-3 2.2-1.2 0-2.3-.5-2.8-1.4M12 5.8v1.6m0 9.2v1.6" stroke="currentColor" {...stroke} />
+      </svg>
+    ),
+  },
+  {
+    key: "perf",
+    category: "Performance",
+    value: 30,
+    label: "Faster systems",
+    desc: "Relentless tuning from query plans to cache layers keeps performance climbing.",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
+        <path d="M13.5 2.5 5 13.5h5.5L10 21.5l8.5-11h-5.5l.5-8z" stroke="currentColor" {...stroke} />
+      </svg>
+    ),
+  },
+  {
+    key: "prod",
+    category: "Productivity",
+    value: 70,
+    label: "Engineering time saved",
+    desc: "Routine tuning goes to the agents. Your engineers go back to building product.",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
+        <path d="M4.5 7.5A9 9 0 1 1 3 12" stroke="currentColor" {...stroke} />
+        <path d="M3 4v3.5h3.5" stroke="currentColor" {...stroke} />
+        <path d="M12 7.5V12l3.2 1.9" stroke="currentColor" {...stroke} />
+      </svg>
+    ),
+  },
+  {
+    key: "sust",
+    category: "Sustainability",
+    value: 35,
+    label: "Smaller carbon footprint",
+    desc: "Every optimization removes wasted energy, with ESG reporting to prove it.",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
+        <path d="M19.5 4.5c-7.2 0-11.8 3.3-11.8 8.8 0 1.9.7 3.4 1.8 4.4 1.8 1.8 4 2 5.5 1.3 4.4-2.1 4.5-9.4 4.5-14.5z" stroke="currentColor" {...stroke} />
+        <path d="M6.5 20.5c1.8-4.1 4.7-7.4 8.7-9.6" stroke="currentColor" {...stroke} />
+      </svg>
+    ),
+  },
+];
+
+/* ---------------- primitives ---------------- */
 
 function IconOrb({ children }: { children: React.ReactNode }) {
   return (
@@ -23,7 +89,8 @@ function IconOrb({ children }: { children: React.ReactNode }) {
   );
 }
 
-function MeterBar({ value, delay = 0.3, className }: { value: number; delay?: number; className?: string }) {
+/** Thin progress indicator with a glowing endpoint dot. Decorative echo of the metric. */
+function MetricProgress({ value, delay = 0.3, className }: { value: number; delay?: number; className?: string }) {
   const reduce = useReducedMotion();
   return (
     <div className={`flex items-center gap-3 ${className ?? ""}`} aria-hidden="true">
@@ -43,49 +110,66 @@ function MeterBar({ value, delay = 0.3, className }: { value: number; delay?: nu
   );
 }
 
-function CardShell({
-  children,
-  anchor,
-  className,
-  delay = 0,
-}: {
-  children: React.ReactNode;
-  anchor?: boolean;
-  className?: string;
-  delay?: number;
-}) {
+/** Category row + metric + progress + label + description, shared by all panels. */
+function BenefitContent({ benefit, big, delay }: { benefit: Benefit; big?: boolean; delay: number }) {
   return (
-    <Reveal delay={delay} className={className}>
-      <article
-        className={`relative h-full overflow-hidden rounded-[22px] border transition-all duration-400 ${
-          anchor
-            ? "border-accent/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_60px_-24px_rgba(0,94,255,0.4)] hover:border-accent/45"
-            : "border-accent/[0.14] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] hover:border-accent/30"
+    <>
+      <div className="flex items-center gap-5">
+        <IconOrb>{benefit.icon}</IconOrb>
+        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-accent-2">{benefit.category}</p>
+      </div>
+      <p
+        className={`mt-7 font-semibold leading-none tracking-[-0.03em] text-ink tabular ${
+          big ? "text-[4.75rem] sm:text-[5.75rem]" : "text-[3.4rem]"
         }`}
-        style={{ background: "linear-gradient(160deg, #0b1526 0%, #060c18 55%, #050a13 100%)" }}
       >
-        {children}
-      </article>
-    </Reveal>
+        <Counter to={benefit.value} duration={1.6} delay={delay} />
+        <span className="text-accent-2">%</span>
+      </p>
+      <MetricProgress value={benefit.value} delay={delay + 0.15} className="mt-6" />
+      <h3 className={`mt-7 font-semibold tracking-tight text-ink ${big ? "text-2xl" : "text-xl"}`}>
+        {benefit.label}
+      </h3>
+      <p className="mt-2.5 max-w-sm text-[0.9375rem] leading-relaxed text-fog">{benefit.desc}</p>
+    </>
   );
 }
 
-/* ---------- card visuals ---------- */
-
-/**
- * Declining spend line for the anchor card. Drawn in a tall 340x520 space
- * that matches its rendered region, so nothing distorts: gentle sawtooth
- * descent, dotted gridlines, soft area fill, one marked point, floating chip.
- */
-function DeclineChart() {
-  const reduce = useReducedMotion();
-  const line =
-    "M24 56 L104 148 L96 134 L180 248 L172 234 L252 352 L244 338 L312 452";
+/** Shared card chrome: navy gradient, thin border, hover lift + glow. */
+function CardFrame({
+  children,
+  featured,
+  className,
+}: {
+  children: React.ReactNode;
+  featured?: boolean;
+  className?: string;
+}) {
   return (
-    <div className="relative h-full w-full" aria-hidden="true">
+    <article
+      className={`group relative h-full overflow-hidden rounded-[22px] border transition-all duration-400 motion-safe:hover:-translate-y-1 ${
+        featured
+          ? "border-accent/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_0_60px_-24px_rgba(0,94,255,0.4)] hover:border-accent/50 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_18px_70px_-24px_rgba(0,94,255,0.5)]"
+          : "border-accent/[0.14] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] hover:border-accent/35 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_16px_50px_-22px_rgba(0,94,255,0.4)]"
+      } ${className ?? ""}`}
+      style={{ background: "linear-gradient(160deg, #0b1526 0%, #060c18 55%, #050a13 100%)" }}
+    >
+      {children}
+    </article>
+  );
+}
+
+/* ---------------- decorative graphics ---------------- */
+
+/** Descending cloud-waste line in a tall 340x520 space (matches its region, no distortion). */
+function CostReductionChart() {
+  const reduce = useReducedMotion();
+  const line = "M24 56 L104 148 L96 134 L180 248 L172 234 L252 352 L244 338 L312 452";
+  return (
+    <div className="relative h-full min-h-[300px] w-full" aria-hidden="true">
       <svg viewBox="0 0 340 520" preserveAspectRatio="none" className="h-full w-full">
         <defs>
-          <linearGradient id="decline-area" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id="cost-chart-area" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="rgba(0,94,255,0.22)" />
             <stop offset="85%" stopColor="rgba(0,94,255,0)" />
           </linearGradient>
@@ -95,7 +179,7 @@ function DeclineChart() {
         ))}
         <motion.path
           d={`${line} L312 520 L24 520 Z`}
-          fill="url(#decline-area)"
+          fill="url(#cost-chart-area)"
           initial={reduce ? { opacity: 1 } : { opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -116,7 +200,7 @@ function DeclineChart() {
           transition={{ duration: 1.7, delay: 0.3, ease: "easeInOut" }}
         />
       </svg>
-      {/* marked point at the P4 vertex (172,234 in a 340x520 space) */}
+      {/* glowing point on the P4 vertex (172,234 of 340x520) */}
       <motion.span
         className="absolute"
         style={{ left: "50.6%", top: "45%" }}
@@ -125,12 +209,8 @@ function DeclineChart() {
         viewport={{ once: true }}
         transition={{ duration: 0.4, delay: 1.2 }}
       >
-        <span className="absolute -translate-x-1/2 -translate-y-1/2">
-          <span className="block h-4 w-4 rounded-full border border-[#5aa2ff]/60" />
-        </span>
-        <span className="absolute -translate-x-1/2 -translate-y-1/2">
-          <span className="block h-[7px] w-[7px] rounded-full bg-[#9cc6ff] shadow-[0_0_10px_rgba(90,162,255,0.95)]" />
-        </span>
+        <span className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#5aa2ff]/60 p-2" />
+        <span className="absolute h-[7px] w-[7px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#9cc6ff] shadow-[0_0_10px_rgba(90,162,255,0.95)]" />
       </motion.span>
       <motion.span
         className="absolute bottom-[9%] left-1/2 inline-flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-[#0b1628]/90 px-3.5 py-1.5 text-[12px] font-medium text-fog backdrop-blur-sm"
@@ -148,30 +228,24 @@ function DeclineChart() {
   );
 }
 
-/** 250° gauge arc, filled ~82% with a glowing dot at the fill tip. */
-function GaugeArc() {
+/** 250° arc gauge, ~82% filled, glowing tip dot. */
+function PerformanceGauge() {
   const reduce = useReducedMotion();
-  const LEN = 305.4; // r=70, 250° sweep
-  const REST = 55; // ~82% filled
+  const LEN = 305.4;
+  const REST = 55;
   return (
     <svg viewBox="0 0 180 180" className="h-[168px] w-[168px]" aria-hidden="true">
       <defs>
-        <linearGradient id="gauge-grad" x1="0" y1="1" x2="1" y2="0">
+        <linearGradient id="perf-gauge-grad" x1="0" y1="1" x2="1" y2="0">
           <stop offset="0%" stopColor="#0050d6" />
           <stop offset="100%" stopColor="#5aa2ff" />
         </linearGradient>
       </defs>
-      <path
-        d="M 32.7 130.2 A 70 70 0 1 1 147.3 130.2"
-        fill="none"
-        stroke="rgba(255,255,255,0.1)"
-        strokeWidth="11"
-        strokeLinecap="round"
-      />
+      <path d="M 32.7 130.2 A 70 70 0 1 1 147.3 130.2" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="11" strokeLinecap="round" />
       <motion.path
         d="M 32.7 130.2 A 70 70 0 1 1 147.3 130.2"
         fill="none"
-        stroke="url(#gauge-grad)"
+        stroke="url(#perf-gauge-grad)"
         strokeWidth="11"
         strokeLinecap="round"
         strokeDasharray={LEN}
@@ -197,9 +271,29 @@ function GaugeArc() {
   );
 }
 
-/** Dotted quarter-arcs hugging the card's right edge (sustainability). */
-function DottedArcs() {
-  const dots: { x: number; y: number; o: number; r: number }[] = [];
+/** Faint dot grid in the productivity panel's corner. */
+function DotGridPattern() {
+  return (
+    <svg viewBox="0 0 120 96" className="pointer-events-none absolute right-6 top-6 h-24 w-[120px]" aria-hidden="true">
+      {Array.from({ length: 5 }).flatMap((_, row) =>
+        Array.from({ length: 6 }).map((_, col) => (
+          <circle
+            key={`${row}-${col}`}
+            cx={10 + col * 20}
+            cy={8 + row * 20}
+            r="1.6"
+            fill="#4d9aff"
+            opacity={0.08 + 0.04 * ((row + col) % 3)}
+          />
+        )),
+      )}
+    </svg>
+  );
+}
+
+/** Concentric dotted quarter-arcs clipped to the sustainability panel's right edge. */
+function EcoArcPattern() {
+  const dots: { x: number; y: number; o: number }[] = [];
   const CX = 252;
   const CY = 210;
   [72, 108, 144, 180].forEach((radius, ring) => {
@@ -207,100 +301,76 @@ function DottedArcs() {
       const rad = (a * Math.PI) / 180;
       const x = CX + radius * Math.cos(rad);
       const y = CY + radius * Math.sin(rad);
-      if (x > 4 && y > 8 && y < 412) {
-        dots.push({ x, y, o: 0.34 - ring * 0.055, r: 1.8 });
-      }
+      if (x > 4 && y > 8 && y < 412) dots.push({ x, y, o: 0.34 - ring * 0.055 });
     }
   });
   return (
     <div className="pointer-events-none absolute inset-y-0 right-0 w-[42%] overflow-hidden" aria-hidden="true">
-      <svg
-        viewBox="0 0 220 420"
-        className="absolute right-0 top-1/2 h-[105%] w-auto -translate-y-1/2"
-        preserveAspectRatio="xMaxYMid meet"
-      >
+      <svg viewBox="0 0 220 420" className="absolute right-0 top-1/2 h-[105%] w-auto -translate-y-1/2" preserveAspectRatio="xMaxYMid meet">
         {dots.map((d, i) => (
-          <circle key={i} cx={d.x} cy={d.y} r={d.r} fill="#4d9aff" opacity={d.o} />
+          <circle key={i} cx={d.x} cy={d.y} r="1.8" fill="#4d9aff" opacity={d.o} />
         ))}
       </svg>
     </div>
   );
 }
 
-/* ---------- icons ---------- */
+/* ---------------- panels ---------------- */
 
-const ICONS = {
-  cost: (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
-      <circle cx="12" cy="12" r="9" stroke="currentColor" {...stroke} />
-      <path d="M14.8 8.8c-.5-.9-1.6-1.4-2.8-1.4-1.7 0-3 .9-3 2.2 0 2.9 6 1.5 6 4.4 0 1.3-1.3 2.2-3 2.2-1.2 0-2.3-.5-2.8-1.4M12 5.8v1.6m0 9.2v1.6" stroke="currentColor" {...stroke} />
-    </svg>
-  ),
-  perf: (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
-      <path d="M13.5 2.5 5 13.5h5.5L10 21.5l8.5-11h-5.5l.5-8z" stroke="currentColor" {...stroke} />
-    </svg>
-  ),
-  prod: (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
-      <path d="M4.5 7.5A9 9 0 1 1 3 12" stroke="currentColor" {...stroke} />
-      <path d="M3 4v3.5h3.5" stroke="currentColor" {...stroke} />
-      <path d="M12 7.5V12l3.2 1.9" stroke="currentColor" {...stroke} />
-    </svg>
-  ),
-  sust: (
-    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
-      <path d="M19.5 4.5c-7.2 0-11.8 3.3-11.8 8.8 0 1.9.7 3.4 1.8 4.4 1.8 1.8 4 2 5.5 1.3 4.4-2.1 4.5-9.4 4.5-14.5z" stroke="currentColor" {...stroke} />
-      <path d="M6.5 20.5c1.8-4.1 4.7-7.4 8.7-9.6" stroke="currentColor" {...stroke} />
-    </svg>
-  ),
-};
-
-/* ---------- stat block ---------- */
-
-function StatBlock({
-  label,
-  icon,
-  value,
-  title,
-  desc,
-  big,
-  delay,
-}: {
-  label: string;
-  icon: React.ReactNode;
-  value: number;
-  title: string;
-  desc: string;
-  big?: boolean;
-  delay: number;
-}) {
+function FeaturedBenefitCard({ benefit }: { benefit: Benefit }) {
   return (
-    <>
-      <div className="flex items-center gap-5">
-        <IconOrb>{icon}</IconOrb>
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-accent-2">{label}</p>
-      </div>
-      <p
-        className={`mt-7 font-semibold leading-none tracking-[-0.03em] text-ink tabular ${
-          big ? "text-[4.75rem] sm:text-[5.75rem]" : "text-[3.4rem]"
-        }`}
-      >
-        <Counter to={value} duration={1.6} delay={delay} />
-        <span className="text-accent-2">%</span>
-      </p>
-      <MeterBar value={value} delay={delay + 0.15} className="mt-6" />
-      <h3 className={`mt-7 font-semibold tracking-tight text-ink ${big ? "text-2xl" : "text-xl"}`}>{title}</h3>
-      <p className="mt-2.5 max-w-sm text-[0.9375rem] leading-relaxed text-fog">{desc}</p>
-    </>
+    <Reveal className="h-full">
+      <CardFrame featured>
+        <div className="grid h-full gap-8 p-7 sm:p-9 lg:grid-cols-[1fr_0.82fr]">
+          <div>
+            <BenefitContent benefit={benefit} big delay={0.2} />
+          </div>
+          <div className="hidden lg:block">
+            <CostReductionChart />
+          </div>
+        </div>
+      </CardFrame>
+    </Reveal>
   );
 }
 
-/* ---------- section ---------- */
+function BenefitCard({
+  benefit,
+  visual,
+  decoration,
+  delay = 0,
+}: {
+  benefit: Benefit;
+  visual?: React.ReactNode;
+  decoration?: React.ReactNode;
+  delay?: number;
+}) {
+  return (
+    <Reveal delay={delay} className="h-full">
+      <CardFrame>
+        {decoration}
+        <div className="relative flex items-center gap-8 p-7 sm:p-8">
+          <div className="min-w-0 flex-1">
+            <BenefitContent benefit={benefit} delay={delay + 0.3} />
+          </div>
+          {visual && <div className="hidden shrink-0 self-center md:block">{visual}</div>}
+        </div>
+      </CardFrame>
+    </Reveal>
+  );
+}
+
+/* ---------------- section ---------------- */
 
 export function Benefits() {
+  const [cost, perf, prod, sust] = BENEFITS;
   return (
-    <section id="benefits" className="scroll-mt-24 py-24 sm:py-32" aria-labelledby="benefits-heading">
+    <section id="benefits" className="relative scroll-mt-24 py-24 sm:py-32" aria-labelledby="benefits-heading">
+      {/* ambient glow behind the featured area */}
+      <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="glow-orb left-[8%] top-[30%] h-[560px] w-[720px] opacity-30" />
+      </div>
+
       <div className="container-x">
         <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
           <Reveal>
@@ -309,7 +379,7 @@ export function Benefits() {
               id="benefits-heading"
               className="mt-4 text-balance text-4xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl"
             >
-              Results you can put a <span className="accent-word">number on</span>
+              Results you can put a <span className="accent-word">number</span> on
             </h2>
           </Reveal>
           <Reveal delay={0.08}>
@@ -320,74 +390,15 @@ export function Benefits() {
           </Reveal>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-4 lg:mt-14 lg:grid-cols-12">
-          {/* anchor: cost efficiency */}
-          <CardShell anchor className="lg:col-span-6 lg:row-span-2">
-            <div className="relative h-full p-7 sm:p-9">
-              <div className="lg:max-w-[50%]">
-                <StatBlock
-                  label="Cost efficiency"
-                  icon={ICONS.cost}
-                  value={40}
-                  title="Lower cloud spend"
-                  desc="Continuous cross-layer optimization eliminates waste the moment an agent finds it."
-                  big
-                  delay={0.2}
-                />
-              </div>
-              <div className="absolute bottom-9 right-8 top-24 hidden w-[42%] lg:block">
-                <DeclineChart />
-              </div>
+        <div className="mt-12 grid gap-4 lg:mt-14 lg:grid-cols-2">
+          <FeaturedBenefitCard benefit={cost} />
+          <div className="grid content-stretch gap-4">
+            <BenefitCard benefit={perf} visual={<PerformanceGauge />} delay={0.08} />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <BenefitCard benefit={prod} decoration={<DotGridPattern />} delay={0.14} />
+              <BenefitCard benefit={sust} decoration={<EcoArcPattern />} delay={0.2} />
             </div>
-          </CardShell>
-
-          {/* performance */}
-          <CardShell delay={0.08} className="lg:col-span-6">
-            <div className="flex items-center gap-8 p-7 sm:p-9">
-              <div className="min-w-0 flex-1">
-                <StatBlock
-                  label="Performance"
-                  icon={ICONS.perf}
-                  value={30}
-                  title="Faster systems"
-                  desc="Relentless tuning from query plans to cache layers keeps performance climbing."
-                  delay={0.35}
-                />
-              </div>
-              <div className="hidden shrink-0 self-center md:block">
-                <GaugeArc />
-              </div>
-            </div>
-          </CardShell>
-
-          {/* productivity */}
-          <CardShell delay={0.14} className="lg:col-span-3">
-            <div className="p-7 sm:p-8">
-              <StatBlock
-                label="Productivity"
-                icon={ICONS.prod}
-                value={70}
-                title="Engineering time saved"
-                desc="Routine tuning goes to the agents. Your engineers go back to building product."
-                delay={0.5}
-              />
-            </div>
-          </CardShell>
-
-          {/* sustainability */}
-          <CardShell delay={0.2} className="lg:col-span-3">
-            <DottedArcs />
-            <div className="relative p-7 sm:p-8">
-              <StatBlock
-                label="Sustainability"
-                icon={ICONS.sust}
-                value={35}
-                title="Smaller carbon footprint"
-                desc="Every optimization removes wasted energy, with ESG reporting to prove it."
-                delay={0.65}
-              />
-            </div>
-          </CardShell>
+          </div>
         </div>
       </div>
     </section>
