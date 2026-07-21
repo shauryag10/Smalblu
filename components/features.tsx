@@ -166,28 +166,70 @@ function AnomalyViz() {
 
 function EcosystemViz() {
   const reduce = useReducedMotion();
-  const teams = ["DevOps", "FinOps", "CTOs & VPs", "Sustainability"];
+  const sources = [
+    /* database */
+    <svg key="db" viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+      <ellipse cx="10" cy="5" rx="6" ry="2.4" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M4 5v10c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4V5M4 10c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    </svg>,
+    /* data lake */
+    <svg key="lake" viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+      <path d="M10 2.5c2.6 3 4.3 5.4 4.3 7.8a4.3 4.3 0 1 1-8.6 0c0-2.4 1.7-4.8 4.3-7.8z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+      <path d="M4 16.8c2 1 4 1 6 0s4-1 6 0" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    </svg>,
+    /* cloud infra */
+    <svg key="cloud" viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+      <path d="M5.5 15.5a3.5 3.5 0 0 1-.6-6.95 5.1 5.1 0 0 1 9.8-.9 4 4 0 0 1-.5 7.85h-8.7z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+    </svg>,
+  ];
   return (
-    <div className="grid w-full grid-cols-2 gap-1.5" aria-hidden="true">
-      {teams.map((team, i) => (
-        <motion.span
-          key={team}
-          className={`flex items-center justify-between gap-2 rounded-lg border px-2.5 py-2 ${
-            i === 1
-              ? "border-accent/45 bg-accent/[0.1] shadow-[0_0_16px_-4px_rgba(0,94,255,0.5)]"
-              : "border-white/10 bg-white/[0.04]"
-          }`}
-          initial={reduce ? false : { opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, delay: 0.12 + i * 0.08, ease: EASE }}
-        >
-          <span className={`truncate text-[11px] font-medium ${i === 1 ? "text-ink" : "text-fog"}`}>{team}</span>
-          <svg viewBox="0 0 14 14" fill="none" className={`h-3 w-3 shrink-0 ${i === 1 ? "text-accent-3" : "text-faint"}`}>
-            <path d="m2 9.5 3.2-3.4 2.4 2 4.4-4.6m0 0v3.2m0-3.2H8.8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </motion.span>
-      ))}
+    <div className="relative flex h-[112px] w-full items-center" aria-hidden="true">
+      <div className="flex flex-col gap-2">
+        {sources.map((icon, i) => (
+          <motion.span
+            key={i}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-fog"
+            initial={reduce ? false : { opacity: 0, x: -12 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.1 + i * 0.09, ease: EASE }}
+          >
+            {icon}
+          </motion.span>
+        ))}
+      </div>
+
+      {/* converging connectors */}
+      <svg viewBox="0 0 120 112" preserveAspectRatio="none" className="h-[112px] min-w-0 flex-1">
+        {[22, 56, 90].map((y, i) => (
+          <motion.path
+            key={y}
+            d={`M0 ${y} C 55 ${y}, 65 56, 118 56`}
+            fill="none"
+            stroke="rgba(64,150,219,0.35)"
+            strokeWidth="1.2"
+            initial={reduce ? false : { pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.25 + i * 0.08, ease: "easeOut" }}
+          />
+        ))}
+      </svg>
+
+      {/* insight node */}
+      <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-accent/50 bg-accent/10 text-accent-3 shadow-[0_0_24px_-4px_rgba(0,94,255,0.6)]">
+        {!reduce && (
+          <motion.span
+            className="absolute inset-0 rounded-xl border border-accent/40"
+            animate={{ scale: [1, 1.35], opacity: [0.6, 0] }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut" }}
+          />
+        )}
+        <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5">
+          <path d="M10 2c.8 2.8 1.7 3.7 4.5 4.5C11.7 7.3 10.8 8.2 10 11c-.8-2.8-1.7-3.7-4.5-4.5C8.3 5.7 9.2 4.8 10 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+          <path d="M15 12.5c.5 1.6 1 2.1 2.6 2.6-1.6.5-2.1 1-2.6 2.6-.5-1.6-1-2.1-2.6-2.6 1.6-.5 2.1-1 2.6-2.6z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+        </svg>
+      </div>
     </div>
   );
 }
@@ -308,8 +350,8 @@ export function Features() {
           <FeatureCard
             className="lg:col-span-3"
             delay={0.15}
-            title="Data Ecosystem Intelligence"
-            desc="Actionable insights across data lakes, databases, and infrastructure. Each team sees what they own."
+            title="Ecosystem Intelligence"
+            desc="One view across lakes, databases, and infrastructure."
             visual={<EcosystemViz />}
           />
           <FeatureCard
