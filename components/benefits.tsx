@@ -171,12 +171,17 @@ function CardFrame({
 /** Descending cloud-waste line in a tall 340x520 space (matches its region, no distortion). */
 function CostReductionChart() {
   const reduce = useReducedMotion();
-  // smooth rolling descent through on-curve nodes; dot sits on the (196,224) node
+  // stepped-terrace descent: near-flat shelves alternating with smooth drops,
+  // strictly monotonic, entering at the left edge and exiting mid-right.
+  // Drawn in a fixed 4:5 box (320x400).
   const line =
-    "M18 42 C 48 44, 72 58, 96 84 S 128 128, 148 156 S 176 196, 196 224 S 224 276, 240 304 S 268 356, 284 388 S 306 436, 322 468";
+    "M0 36 C 16 40, 30 40, 44 44 C 58 48, 66 68, 78 86 C 88 96, 100 93, 112 94 " +
+    "C 126 96, 134 116, 146 140 C 158 148, 162 146, 172 148 C 184 150, 192 168, 204 196 " +
+    "C 214 202, 222 202, 232 204 C 244 206, 252 226, 262 244 C 272 250, 280 252, 288 256 " +
+    "C 298 260, 310 274, 320 290";
   return (
-    <div className="relative h-full min-h-[300px] w-full" aria-hidden="true">
-      <svg viewBox="0 0 340 520" preserveAspectRatio="none" className="h-full w-full">
+    <div className="relative w-full lg:aspect-[4/5] lg:max-h-[450px]" aria-hidden="true">
+      <svg viewBox="0 0 320 400" preserveAspectRatio="none" className="h-full min-h-[280px] w-full lg:min-h-0">
         <defs>
           <linearGradient id="cost-chart-area" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="rgba(0,94,255,0.16)" />
@@ -184,21 +189,21 @@ function CostReductionChart() {
           </linearGradient>
         </defs>
         {/* dotted gridline columns */}
-        {[76, 140, 204, 268].map((x) => (
+        {[40, 80, 120, 160, 200, 240, 280].map((x) => (
           <line
             key={x}
             x1={x}
-            y1="34"
+            y1="30"
             x2={x}
-            y2="496"
-            stroke="rgba(120,170,255,0.14)"
-            strokeWidth="1.6"
+            y2="372"
+            stroke="rgba(120,170,255,0.12)"
+            strokeWidth="1.5"
             strokeLinecap="round"
-            strokeDasharray="1.5 9"
+            strokeDasharray="1.5 7"
           />
         ))}
         <motion.path
-          d={`${line} L322 520 L18 520 Z`}
+          d={`${line} L320 400 L0 400 Z`}
           fill="url(#cost-chart-area)"
           initial={reduce ? { opacity: 1 } : { opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -233,10 +238,10 @@ function CostReductionChart() {
           transition={{ duration: 1.7, delay: 0.3, ease: "easeInOut" }}
         />
       </svg>
-      {/* glowing point on the (196,224) node */}
+      {/* glowing point mid-way down the third drop (188,162) */}
       <motion.span
         className="absolute"
-        style={{ left: "57.6%", top: "43.1%" }}
+        style={{ left: "58.75%", top: "40.6%" }}
         initial={reduce ? { opacity: 1 } : { opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -411,7 +416,7 @@ function FeaturedBenefitCard({ benefit }: { benefit: Benefit }) {
           <div>
             <BenefitContent benefit={benefit} big delay={0.2} />
           </div>
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex lg:items-center">
             <CostReductionChart />
           </div>
         </div>
