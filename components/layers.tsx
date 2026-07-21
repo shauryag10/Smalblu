@@ -18,7 +18,7 @@ const LAYERS: Layer[] = [
   {
     name: "User",
     dot: "#80b9e7",
-    desc: "Learns real usage patterns and demand cycles, so capacity follows actual need.",
+    desc: "Sessions, client-side caching, and access patterns tuned where usage begins.",
     icon: (
       <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" aria-hidden="true">
         <circle cx="10" cy="6.5" r="3" stroke="currentColor" {...stroke} />
@@ -29,7 +29,7 @@ const LAYERS: Layer[] = [
   {
     name: "Application",
     dot: "#4096db",
-    desc: "Tunes services, caching, and hot code paths for maximum throughput.",
+    desc: "APIs, microservices, and caching optimized end to end, from gateway to code.",
     icon: (
       <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" aria-hidden="true">
         <rect x="2.5" y="3.5" width="15" height="13" rx="2" stroke="currentColor" {...stroke} />
@@ -40,7 +40,7 @@ const LAYERS: Layer[] = [
   {
     name: "Compute",
     dot: "#3b82ff",
-    desc: "Right-sizes instances, autoscaling, and scheduling to eliminate idle spend.",
+    desc: "Instances right-sized, autoscaled, and moved to spot capacity, no idle spend.",
     icon: (
       <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" aria-hidden="true">
         <rect x="5" y="5" width="10" height="10" rx="2" stroke="currentColor" {...stroke} />
@@ -51,7 +51,7 @@ const LAYERS: Layer[] = [
   {
     name: "Network",
     dot: "#2f8fd8",
-    desc: "Cuts egress waste and latency with smarter routing and data placement.",
+    desc: "Bandwidth, CDN, and transfer paths tuned for lower latency and egress cost.",
     icon: (
       <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" aria-hidden="true">
         <circle cx="10" cy="4" r="2" stroke="currentColor" {...stroke} />
@@ -64,7 +64,7 @@ const LAYERS: Layer[] = [
   {
     name: "Database",
     dot: "#2b7fc4",
-    desc: "Continuously optimizes queries, indexes, and engine parameters.",
+    desc: "Queries, connection pools, and replicas tuned for speed and efficiency.",
     icon: (
       <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" aria-hidden="true">
         <ellipse cx="10" cy="4.5" rx="6.5" ry="2.5" stroke="currentColor" {...stroke} />
@@ -75,7 +75,7 @@ const LAYERS: Layer[] = [
   {
     name: "Storage",
     dot: "#2670ab",
-    desc: "Tiers and compresses data so every byte earns its keep.",
+    desc: "Data tiered, compressed, and archived so every byte earns its keep.",
     icon: (
       <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5" aria-hidden="true">
         <rect x="2.5" y="3" width="15" height="6" rx="1.5" stroke="currentColor" {...stroke} />
@@ -126,7 +126,8 @@ export function Layers() {
           onBlurCapture={() => setPaused(false)}
         >
           {/* isometric stack */}
-          <div className="relative mx-auto flex h-[500px] w-full max-w-[460px] flex-col sm:h-[580px]" aria-hidden="true">
+          <div className="flex flex-col items-center">
+            <div className="relative mx-auto flex h-[500px] w-full max-w-[460px] flex-col sm:h-[580px]" aria-hidden="true">
             {/* vertical beam with the mark at its head */}
             <div className="absolute left-1/2 top-[3%] h-[91%] w-px -translate-x-1/2 bg-gradient-to-b from-accent/80 via-accent/25 to-transparent" />
             <LogoMark className="absolute left-1/2 top-[1%] h-6 w-auto -translate-x-1/2 text-accent drop-shadow-[0_0_14px_rgba(0,94,255,0.9)]" />
@@ -168,7 +169,8 @@ export function Layers() {
               );
             })}
 
-            <p className="absolute inset-x-0 bottom-0 text-center font-mono text-[11px] tracking-wide text-faint">
+            </div>
+            <p className="mt-14 text-center font-mono text-[11px] tracking-wide text-faint">
               Six agents. One coordinated optimization and compression engine.
             </p>
           </div>

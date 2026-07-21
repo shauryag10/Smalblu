@@ -64,7 +64,7 @@ function arcPath(r: number, endDeg: number) {
 // leader lines: [x1, y1, x2, y2]
 const LEADERS = [
   { line: [677, 560, 818, 560], dot: [818, 560] }, // 01: horizontal, from inner arc end
-  { line: [705, 452, 705, 318], dot: [705, 452] }, // 02: vertical, from middle arc end region
+  { line: [708, 462, 748, 345], dot: [708, 462] }, // 02: diagonal, from middle arc end cap into the clear pocket
   { line: [377, 288, 377, 148], dot: [377, 288] }, // 03: vertical, from outer arc upper-left
 ];
 
@@ -160,8 +160,8 @@ function ArcDiagram() {
           <h3 className="mt-1 text-[15px] font-semibold leading-snug text-ink">{ARCS[0].title}</h3>
           <p className="mt-1 text-[13px] leading-relaxed text-fog">{ARCS[0].desc}</p>
         </div>
-        {/* 02: above its vertical leader */}
-        <div className="absolute w-[230px] -translate-x-1/2 -translate-y-full pb-2" style={{ left: "70.5%", top: "51.3%" }}>
+        {/* 02: right of the outer arc's end, above its diagonal leader */}
+        <div className="absolute w-[220px] -translate-y-full pb-2" style={{ left: "74%", top: "53%" }}>
           <p className="font-mono text-lg font-semibold text-accent-3">02</p>
           <h3 className="mt-1 text-[15px] font-semibold leading-snug text-ink">{ARCS[1].title}</h3>
           <p className="mt-1 text-[13px] leading-relaxed text-fog">{ARCS[1].desc}</p>
