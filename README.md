@@ -50,9 +50,10 @@ Colors and type come from the official branding card in `/assets`:
 - [ ] **Contact form backend** — `components/contact-form.tsx` currently simulates
       success; wire the `TODO(backend)` block to a serverless function / Formspree /
       CRM webhook.
-- [ ] **Partner logos** — the marquee glyphs (AWS, Azure, Google Cloud, PostgreSQL,
-      MySQL, MongoDB, Snowflake, Redis) are clean hand-drawn placeholders; replace
-      with official press-kit SVGs (mind each vendor's trademark guidelines).
+- [x] **Partner logos** — official marks now served from `public/logos/` (sourced
+      from the gilbarbara/logos collection), rendered monochrome in the marquee.
+      Trademarks belong to their owners; shown in a "works with" capacity. Review
+      each vendor's brand guidelines before launch.
 - [ ] **Calendly** — confirm the embed color params / GDPR banner setting on the
       production Calendly account.
 - [ ] **Analytics** — none installed by choice; add Vercel Analytics or Plausible if

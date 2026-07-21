@@ -255,14 +255,15 @@
 }
 
 .logo-cell {
-  filter: grayscale(1) brightness(1.4);
-  opacity: 0.45;
+  /* flatten real brand marks (any color) to a uniform light gray */
+  filter: brightness(0) invert(0.72);
+  opacity: 0.75;
   transition:
     filter 0.35s ease,
     opacity 0.35s ease;
 }
 .logo-cell:hover {
-  filter: none;
+  filter: brightness(0) invert(1);
   opacity: 1;
 }
 
