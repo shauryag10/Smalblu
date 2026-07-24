@@ -35,24 +35,20 @@ export function Hero() {
       />
 
       <div className="container-x flex flex-col items-center text-center">
-        <motion.p {...fadeUp(0.05)} className="kicker">
-          AI for enterprise data infrastructure optimization
-        </motion.p>
-
         <motion.h1
-          {...fadeUp(0.15)}
+          {...fadeUp(0.05)}
           id="hero-heading"
-          className="mt-5 max-w-5xl text-balance text-[clamp(3rem,7.5vw,6.25rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-ink"
+          className="max-w-5xl text-balance text-[clamp(3rem,7.5vw,6.25rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-ink"
         >
           Your AI Infrastructure <span className="accent-word">Optimization Team</span>
         </motion.h1>
 
-        <motion.p {...fadeUp(0.28)} className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-fog sm:text-xl">
+        <motion.p {...fadeUp(0.2)} className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-fog sm:text-xl">
           SmalBlu&apos;s AI agents work 24/7 to reduce your costs by 40% and boost performance by
           30%, while you focus on what matters most.
         </motion.p>
 
-        <motion.div {...fadeUp(0.4)} className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
+        <motion.div {...fadeUp(0.34)} className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
           <a
             href={site.calendly}
             target="_blank"

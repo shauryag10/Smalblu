@@ -5,7 +5,6 @@ import { Counter } from "@/components/counter";
 import { Reveal } from "@/components/reveal";
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
-const stroke = { strokeWidth: 1.5, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 
 /* ---------------- data ---------------- */
 
@@ -15,7 +14,6 @@ type Benefit = {
   value: number;
   label: string;
   desc: string;
-  icon: React.ReactNode;
 };
 
 const BENEFITS: Benefit[] = [
@@ -25,12 +23,6 @@ const BENEFITS: Benefit[] = [
     value: 40,
     label: "Lower cloud spend",
     desc: "Continuous cross-layer optimization eliminates waste the moment an agent finds it.",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
-        <circle cx="12" cy="12" r="9" stroke="currentColor" {...stroke} />
-        <path d="M14.8 8.8c-.5-.9-1.6-1.4-2.8-1.4-1.7 0-3 .9-3 2.2 0 2.9 6 1.5 6 4.4 0 1.3-1.3 2.2-3 2.2-1.2 0-2.3-.5-2.8-1.4M12 5.8v1.6m0 9.2v1.6" stroke="currentColor" {...stroke} />
-      </svg>
-    ),
   },
   {
     key: "perf",
@@ -38,11 +30,6 @@ const BENEFITS: Benefit[] = [
     value: 30,
     label: "Faster systems",
     desc: "Relentless tuning from query plans to cache layers keeps performance climbing.",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
-        <path d="M13.5 2.5 5 13.5h5.5L10 21.5l8.5-11h-5.5l.5-8z" stroke="currentColor" {...stroke} />
-      </svg>
-    ),
   },
   {
     key: "prod",
@@ -50,13 +37,6 @@ const BENEFITS: Benefit[] = [
     value: 70,
     label: "Engineering time saved",
     desc: "Routine tuning goes to the agents. Your engineers go back to building product.",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
-        <path d="M4.5 7.5A9 9 0 1 1 3 12" stroke="currentColor" {...stroke} />
-        <path d="M3 4v3.5h3.5" stroke="currentColor" {...stroke} />
-        <path d="M12 7.5V12l3.2 1.9" stroke="currentColor" {...stroke} />
-      </svg>
-    ),
   },
   {
     key: "sust",
@@ -64,30 +44,10 @@ const BENEFITS: Benefit[] = [
     value: 35,
     label: "Smaller carbon footprint",
     desc: "Every optimization removes wasted energy, with ESG reporting to prove it.",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
-        <path d="M19.5 4.5c-7.2 0-11.8 3.3-11.8 8.8 0 1.9.7 3.4 1.8 4.4 1.8 1.8 4 2 5.5 1.3 4.4-2.1 4.5-9.4 4.5-14.5z" stroke="currentColor" {...stroke} />
-        <path d="M6.5 20.5c1.8-4.1 4.7-7.4 8.7-9.6" stroke="currentColor" {...stroke} />
-      </svg>
-    ),
   },
 ];
 
 /* ---------------- primitives ---------------- */
-
-function IconOrb({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="relative inline-flex" aria-hidden="true">
-      <span className="absolute -inset-2 rounded-full border border-accent/20" />
-      <span
-        className="flex h-16 w-16 items-center justify-center rounded-full border border-accent/40 text-[#8fc0ff] shadow-[inset_0_1px_0_rgba(255,255,255,0.16),inset_-7px_-9px_18px_rgba(0,94,255,0.32),0_0_36px_-8px_rgba(0,94,255,0.7)] [&>svg]:h-7 [&>svg]:w-7"
-        style={{ background: "radial-gradient(circle at 30% 25%, #234170 0%, #0b1628 62%)" }}
-      >
-        {children}
-      </span>
-    </span>
-  );
-}
 
 /** Thin progress indicator with a glowing endpoint dot. Decorative echo of the metric. */
 function MetricProgress({ value, delay = 0.3, className }: { value: number; delay?: number; className?: string }) {
@@ -111,12 +71,25 @@ function MetricProgress({ value, delay = 0.3, className }: { value: number; dela
 }
 
 /** Category row + metric + progress + label + description, shared by all panels. */
-function BenefitContent({ benefit, big, delay }: { benefit: Benefit; big?: boolean; delay: number }) {
+function BenefitContent({
+  benefit,
+  index,
+  big,
+  delay,
+}: {
+  benefit: Benefit;
+  index: number;
+  big?: boolean;
+  delay: number;
+}) {
   return (
     <>
-      <div className="flex items-center gap-5">
-        <IconOrb>{benefit.icon}</IconOrb>
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-accent-2">{benefit.category}</p>
+      <div className="flex items-baseline gap-3">
+        <span className="font-mono text-sm font-semibold text-accent-2 tabular">
+          {String(index + 1).padStart(2, "0")}
+        </span>
+        <span aria-hidden="true" className="h-3.5 w-px self-center bg-white/20" />
+        <p className="text-[15px] font-semibold tracking-tight text-fog">{benefit.category}</p>
       </div>
       <p
         className={`mt-7 font-semibold leading-none tracking-[-0.03em] text-ink tabular [text-shadow:0_0_38px_rgba(0,94,255,0.4)] ${
@@ -458,13 +431,13 @@ function EarthDotPattern() {
 
 /* ---------------- panels ---------------- */
 
-function FeaturedBenefitCard({ benefit }: { benefit: Benefit }) {
+function FeaturedBenefitCard({ benefit, index }: { benefit: Benefit; index: number }) {
   return (
     <Reveal className="h-full">
       <CardFrame featured>
         <div className="grid h-full gap-8 p-8 sm:p-10 lg:grid-cols-[1fr_0.9fr]">
           <div>
-            <BenefitContent benefit={benefit} big delay={0.2} />
+            <BenefitContent benefit={benefit} index={index} big delay={0.2} />
           </div>
           <div className="hidden lg:flex lg:items-center">
             <CostReductionChart />
@@ -477,11 +450,13 @@ function FeaturedBenefitCard({ benefit }: { benefit: Benefit }) {
 
 function BenefitCard({
   benefit,
+  index,
   visual,
   decoration,
   delay = 0,
 }: {
   benefit: Benefit;
+  index: number;
   visual?: React.ReactNode;
   decoration?: React.ReactNode;
   delay?: number;
@@ -492,7 +467,7 @@ function BenefitCard({
         {decoration}
         <div className="relative flex items-center gap-8 p-8">
           <div className="min-w-0 flex-1">
-            <BenefitContent benefit={benefit} delay={delay + 0.3} />
+            <BenefitContent benefit={benefit} index={index} delay={delay + 0.3} />
           </div>
           {visual && <div className="hidden shrink-0 self-center md:block">{visual}</div>}
         </div>
@@ -532,12 +507,12 @@ export function Benefits() {
         </div>
 
         <div className="mt-12 grid gap-4 lg:mt-14 lg:grid-cols-2">
-          <FeaturedBenefitCard benefit={cost} />
+          <FeaturedBenefitCard benefit={cost} index={0} />
           <div className="grid content-stretch gap-4">
-            <BenefitCard benefit={perf} visual={<PerformanceGauge />} delay={0.08} />
+            <BenefitCard benefit={perf} index={1} visual={<PerformanceGauge />} delay={0.08} />
             <div className="grid gap-4 sm:grid-cols-2">
-              <BenefitCard benefit={prod} decoration={<DotGridPattern />} delay={0.14} />
-              <BenefitCard benefit={sust} decoration={<EarthDotPattern />} delay={0.2} />
+              <BenefitCard benefit={prod} index={2} decoration={<DotGridPattern />} delay={0.14} />
+              <BenefitCard benefit={sust} index={3} decoration={<EarthDotPattern />} delay={0.2} />
             </div>
           </div>
         </div>
