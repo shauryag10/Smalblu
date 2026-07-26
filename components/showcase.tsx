@@ -8,192 +8,265 @@ import { LogoMark } from "@/components/logo";
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
 /* ---------------------------------------------------------------------------
- * Light product-UI primitives (the console window inverts the site theme).
- * TODO(product): swap the coded mock panels for real product screenshots
- * when available; the window chrome and tabs stay as they are.
+ * Light product-UI mock of the real SmalBlu console (v0.3), restyled to the
+ * site's showcase format: white window, side satellite cards, four tabs
+ * mirroring the product's actual screens.
  * ------------------------------------------------------------------------ */
 
-const LAYER_DOTS = [
-  ["User", "#80b9e7"],
-  ["Application", "#4096db"],
-  ["Compute", "#3b82ff"],
-  ["Network", "#2f8fd8"],
-  ["Database", "#2b7fc4"],
-  ["Storage", "#2670ab"],
-] as const;
-
-function MiniArea({ down }: { down?: boolean }) {
-  const d = down
-    ? "M0 14 C 14 12, 22 18, 34 22 C 46 26, 54 30, 68 34 C 82 38, 92 40, 104 42"
-    : "M0 40 C 14 38, 24 30, 36 28 C 48 26, 58 20, 72 16 C 86 12, 94 10, 104 8";
+function Kpi({ label, value, note, accent }: { label: string; value: string; note?: string; accent?: boolean }) {
   return (
-    <svg viewBox="0 0 104 48" className="h-12 w-full" aria-hidden="true">
-      <path d={`${d} L104 48 L0 48 Z`} fill="rgba(0,94,255,0.1)" />
-      <path d={d} fill="none" stroke="#005eff" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
+    <div className={`rounded-xl border p-3.5 ${accent ? "border-emerald-200 bg-emerald-50/60" : "border-[#e3eaf3] bg-white"}`}>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-[#5c6f88]">{label}</p>
+      <p className={`mt-1 font-mono text-lg font-semibold tabular ${accent ? "text-emerald-600" : "text-[#0c1a2e]"}`}>{value}</p>
+      {note && <p className="mt-0.5 text-[10px] text-[#8194ab]">{note}</p>}
+    </div>
   );
 }
 
-function ObservePanel() {
+/* ---------------- tab 1: dashboard ---------------- */
+
+function DashboardPanel() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h4 className="text-[15px] font-semibold text-[#0c1a2e]">Infrastructure Overview</h4>
+        <div>
+          <h4 className="text-[15px] font-semibold text-[#0c1a2e]">Infrastructure Overview</h4>
+          <p className="text-[11px] text-[#8194ab]">Real-time cost, performance, and sustainability metrics</p>
+        </div>
         <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-600">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-          Live
+          Auto-refresh 30s
         </span>
       </div>
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-xl border border-[#e3eaf3] bg-white p-4">
-          <p className="text-[11px] font-medium text-[#5c6f88]">Cloud spend, month to date</p>
-          <p className="mt-1 font-mono text-xl font-semibold text-[#0c1a2e] tabular">$84,210</p>
-          <MiniArea down />
-          <p className="mt-1 font-mono text-[10px] text-emerald-600">−18% vs last month</p>
+
+      <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+        <Kpi label="Annual cloud spend" value="$1.24M" note="across 3 providers" />
+        <Kpi label="Potential savings" value="$498k" note="annualized" accent />
+        <Kpi label="Active recommendations" value="12" note="4 high impact" />
+        <Kpi label="Annual forecast" value="$786k" note="with SmalBlu applied" />
+      </div>
+
+      <div className="mt-3 rounded-xl border border-[#e3eaf3] bg-white p-4">
+        <div className="flex items-center justify-between">
+          <p className="text-[12px] font-semibold text-[#22334c]">Savings &amp; automation, this month</p>
+          <p className="rounded-md bg-emerald-50 px-2 py-1 font-mono text-[11px] font-semibold text-emerald-600 tabular">
+            $19,668 returned
+          </p>
         </div>
-        <div className="rounded-xl border border-[#e3eaf3] bg-white p-4">
-          <p className="text-[11px] font-medium text-[#5c6f88]">p95 latency</p>
-          <p className="mt-1 font-mono text-xl font-semibold text-[#0c1a2e] tabular">212 ms</p>
-          <MiniArea down />
-          <p className="mt-1 font-mono text-[10px] text-emerald-600">−31% since deploy</p>
+        <div className="mt-3 grid gap-2.5 sm:grid-cols-3">
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-wider text-[#8194ab]">Verified savings</p>
+            <p className="mt-0.5 font-mono text-[15px] font-semibold text-[#0c1a2e] tabular">$19,243</p>
+            <p className="text-[10px] text-[#8194ab]">10 applies · 1 rolled back</p>
+          </div>
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-wider text-[#8194ab]">Human hours saved</p>
+            <p className="mt-0.5 font-mono text-[15px] font-semibold text-[#0c1a2e] tabular">5 h</p>
+            <p className="text-[10px] text-[#8194ab]">≈ $425 of FinOps labor</p>
+          </div>
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-wider text-[#8194ab]">Recos applied</p>
+            <p className="mt-0.5 font-mono text-[15px] font-semibold text-[#0c1a2e] tabular">10</p>
+            <p className="text-[10px] text-[#8194ab]">none pending</p>
+          </div>
         </div>
-        <div className="rounded-xl border border-[#e3eaf3] bg-white p-4">
-          <p className="text-[11px] font-medium text-[#5c6f88]">Layer health</p>
-          <ul className="mt-2 flex flex-col gap-1.5">
-            {LAYER_DOTS.map(([name, color]) => (
-              <li key={name} className="flex items-center gap-2 text-[11px] text-[#41536b]">
-                <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />
-                {name}
-                <span className="ml-auto font-mono text-[9px] uppercase tracking-wider text-emerald-600">ok</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 rounded-xl border border-[#e3eaf3] bg-white px-4 py-3">
+        <p className="text-[12px] font-semibold text-[#22334c]">Alert summary</p>
+        <span className="flex items-center gap-1.5 text-[11px] font-medium text-[#41536b]">
+          <span className="h-1.5 w-1.5 rounded-full bg-red-500" /> 3 Critical
+        </span>
+        <span className="flex items-center gap-1.5 text-[11px] font-medium text-[#41536b]">
+          <span className="h-1.5 w-1.5 rounded-full bg-amber-500" /> 5 Warning
+        </span>
+        <span className="flex items-center gap-1.5 text-[11px] font-medium text-[#41536b]">
+          <span className="h-1.5 w-1.5 rounded-full bg-accent" /> 2 Info
+        </span>
       </div>
     </div>
   );
 }
 
-const RECOMMENDATIONS = [
-  { layer: "Database", text: "Rewrite hot query plan on orders_db", impact: "−$3,120/mo" },
-  { layer: "Storage", text: "Tier 2.3 TB of cold data to archive", impact: "−$840/mo" },
-  { layer: "Compute", text: "Right-size 14 over-provisioned instances", impact: "−$5,660/mo" },
+/* ---------------- tab 2: recommendations ---------------- */
+
+const RECOS = [
+  {
+    title: "Downshift llama-3-8B to distilled variant",
+    tag: "MODEL_SWAP",
+    impact: "$393/mo",
+    confidence: 55,
+  },
+  {
+    title: "Autostop idle g5.xlarge, 19:00 to 07:00",
+    tag: "AUTOSTOP_IDLE_GPU",
+    impact: "$332/mo",
+    confidence: 85,
+  },
+  {
+    title: "Move nightly training to Spot capacity",
+    tag: "SPOT_SWAP_TRAINING",
+    impact: "$664/mo",
+    confidence: 75,
+  },
 ];
 
-function OptimizePanel() {
+function RecommendationsPanel() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h4 className="text-[15px] font-semibold text-[#0c1a2e]">Agent recommendations</h4>
-        <span className="font-mono text-[10px] uppercase tracking-wider text-[#5c6f88]">refreshed 42s ago</span>
+        <h4 className="text-[15px] font-semibold text-[#0c1a2e]">How to cut the bill</h4>
+        <span className="rounded-md bg-accent/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#0050d6]">
+          12 opportunities
+        </span>
       </div>
       <ul className="mt-4 flex flex-col gap-2.5">
-        {RECOMMENDATIONS.map((r) => (
-          <li key={r.text} className="flex flex-wrap items-center gap-3 rounded-xl border border-[#e3eaf3] bg-white p-4">
-            <span className="rounded-md bg-accent/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#0050d6]">
-              {r.layer}
-            </span>
-            <span className="min-w-0 flex-1 text-[13px] font-medium text-[#22334c]">{r.text}</span>
-            <span className="font-mono text-[12px] font-semibold text-emerald-600 tabular">{r.impact}</span>
-            <button
-              type="button"
-              tabIndex={-1}
-              className="rounded-lg bg-[#0c1a2e] px-3.5 py-1.5 text-[12px] font-semibold text-white"
-            >
-              Review
-            </button>
+        {RECOS.map((r) => (
+          <li key={r.title} className="rounded-xl border border-[#e3eaf3] bg-white p-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="min-w-0 flex-1 text-[13px] font-medium text-[#22334c]">{r.title}</span>
+              <span className="font-mono text-[13px] font-semibold text-emerald-600 tabular">{r.impact}</span>
+              <button
+                type="button"
+                tabIndex={-1}
+                className="rounded-lg bg-[#0c1a2e] px-3.5 py-1.5 text-[12px] font-semibold text-white"
+              >
+                Create loop
+              </button>
+            </div>
+            <div className="mt-2.5 flex flex-wrap items-center gap-3">
+              <span className="rounded bg-accent/10 px-1.5 py-0.5 font-mono text-[9px] font-semibold tracking-wide text-[#0050d6]">
+                {r.tag}
+              </span>
+              <span className="flex items-center gap-2 text-[10px] text-[#8194ab]">
+                Confidence
+                <span className="h-1 w-20 overflow-hidden rounded-full bg-[#e3eaf3]">
+                  <span className="block h-full rounded-full bg-accent" style={{ width: `${r.confidence}%` }} />
+                </span>
+                <span className="font-mono tabular">{r.confidence}%</span>
+              </span>
+            </div>
           </li>
         ))}
       </ul>
       <p className="mt-3 text-[11px] text-[#5c6f88]">
-        Estimated total impact: <span className="font-mono font-semibold text-[#0c1a2e]">$9,620/mo</span> across three layers
+        Total identified: <span className="font-mono font-semibold text-[#0c1a2e]">$1,389/mo</span> across GPU workloads alone
       </p>
     </div>
   );
 }
 
-function ApprovePanel() {
+/* ---------------- tab 3: database optimization ---------------- */
+
+function DbPanel() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h4 className="text-[15px] font-semibold text-[#0c1a2e]">Pending changes</h4>
-        <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-600">
-          2 awaiting approval
+        <div>
+          <h4 className="text-[15px] font-semibold text-[#0c1a2e]">Database Optimization</h4>
+          <p className="text-[11px] text-[#8194ab]">PostgreSQL health, slow queries, and suggestions</p>
+        </div>
+        <span className="rounded-md bg-accent/10 px-2 py-1 font-mono text-[10px] font-semibold text-[#0050d6]">
+          customerA · Postgres
         </span>
       </div>
-      <ul className="mt-4 flex flex-col gap-2.5">
-        {[
-          { text: "Apply new indexing strategy on orders_db", detail: "Database agent · est. 4.2× faster reads" },
-          { text: "Consolidate 3 idle dev clusters", detail: "Compute agent · est. −$1,860/mo" },
-        ].map((c) => (
-          <li key={c.text} className="flex flex-wrap items-center gap-3 rounded-xl border border-[#e3eaf3] bg-white p-4">
-            <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-medium text-[#22334c]">{c.text}</p>
-              <p className="mt-0.5 text-[11px] text-[#5c6f88]">{c.detail}</p>
-            </div>
-            <button type="button" tabIndex={-1} className="rounded-lg bg-accent px-3.5 py-1.5 text-[12px] font-semibold text-white">
-              Approve
+
+      <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+        <Kpi label="Connection pool" value="2/100" />
+        <Kpi label="Avg query latency" value="0.7ms" />
+        <Kpi label="Cache hit ratio" value="100.0%" accent />
+        <Kpi label="Slow queries" value="2" />
+      </div>
+
+      <div className="mt-3 rounded-xl border border-[#e3eaf3] bg-white p-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-[12px] font-semibold text-[#22334c]">Postgres Optimization Agent</p>
+          <p className="text-[10px] text-[#8194ab]">
+            <span className="font-mono font-semibold text-emerald-600 tabular">$1,150/mo</span> est. savings · 13 findings · 0
+            critical · 1 warning
+          </p>
+        </div>
+        <div className="mt-3 rounded-lg border-l-[3px] border-amber-400 bg-[#fbf9f2] p-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-700">
+              Warning
+            </span>
+            <span className="text-[12px] font-semibold text-[#22334c]">shared_buffers is low (163848kB)</span>
+            <span className="ml-auto font-mono text-[11px] font-semibold text-emerald-600 tabular">$400/mo</span>
+            <button
+              type="button"
+              tabIndex={-1}
+              className="rounded-md border border-[#d5deea] bg-white px-2.5 py-1 text-[11px] font-semibold text-[#0050d6]"
+            >
+              AI plan
             </button>
-            <button type="button" tabIndex={-1} className="rounded-lg border border-[#d5deea] px-3.5 py-1.5 text-[12px] font-semibold text-[#41536b]">
-              Reject
-            </button>
-          </li>
-        ))}
-      </ul>
-      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] text-[#5c6f88]">
-        <span className="inline-flex items-center gap-1.5">
-          <svg viewBox="0 0 12 12" className="h-3 w-3 text-accent" fill="none" aria-hidden="true">
-            <path d="M2 6a4 4 0 1 1 1.2 2.8M2 6V3.5M2 6h2.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          One-click rollback on every change
-        </span>
-        <span>Full audit trail, always on</span>
+          </div>
+          <p className="mt-1.5 text-[11px] text-[#5c6f88]">
+            Best-practice floor is 25% of RAM. Low shared_buffers forces more disk reads and hurts cache hit ratio.
+          </p>
+          <code className="mt-2 block rounded bg-[#0c1a2e] px-3 py-2 font-mono text-[10px] text-[#9cc6ff]">
+            ALTER SYSTEM SET shared_buffers = &apos;2GB&apos;; -- then restart
+          </code>
+        </div>
       </div>
     </div>
   );
 }
 
-function ReportPanel() {
-  const bars = [34, 42, 38, 52, 61, 74];
+/* ---------------- tab 4: cost reports ---------------- */
+
+function CostPanel() {
+  const bars = [42, 30, 58, 38, 66, 47, 74];
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h4 className="text-[15px] font-semibold text-[#0c1a2e]">Quarterly impact</h4>
-        <span className="rounded-md bg-accent/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#0050d6]">
-          ISO 14067 aligned
+        <div>
+          <h4 className="text-[15px] font-semibold text-[#0c1a2e]">Cost Reports &amp; Analytics</h4>
+          <p className="text-[11px] text-[#8194ab]">Unified view of spend across all 7 cost dimensions</p>
+        </div>
+        <span className="rounded-md border border-[#dbe4f0] px-2 py-1 text-[10px] font-medium text-[#5c6f88]">
+          All teams · All envs
         </span>
       </div>
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_1.2fr]">
-        <div className="rounded-xl border border-[#e3eaf3] bg-white p-4">
-          <p className="text-[11px] font-medium text-[#5c6f88]">Savings this quarter</p>
-          <p className="mt-1 font-mono text-2xl font-semibold text-[#0c1a2e] tabular">$248k</p>
-          <p className="mt-1 font-mono text-[10px] text-emerald-600">on track for 40%</p>
+
+      <div className="mt-4 rounded-xl border border-[#e3eaf3] bg-white p-4">
+        <div className="flex items-center justify-between">
+          <p className="text-[12px] font-semibold text-[#22334c]">Human-hour savings, FinOps + SRE labor displaced</p>
+          <p className="rounded-md bg-accent/10 px-2 py-1 font-mono text-[11px] font-semibold text-[#0050d6] tabular">
+            $425 labor cut
+          </p>
         </div>
-        <div className="rounded-xl border border-[#e3eaf3] bg-white p-4">
-          <p className="text-[11px] font-medium text-[#5c6f88]">CO₂ avoided</p>
-          <p className="mt-1 font-mono text-2xl font-semibold text-[#0c1a2e] tabular">38 t</p>
-          <p className="mt-1 font-mono text-[10px] text-emerald-600">−35% footprint</p>
+        <div className="mt-3 grid gap-2.5 sm:grid-cols-3">
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-wider text-[#8194ab]">Autonomy applies</p>
+            <p className="mt-0.5 font-mono text-[15px] font-semibold text-[#0c1a2e] tabular">10 × 30 min</p>
+            <p className="text-[10px] text-[#8194ab]">5.0 h · $425 saved</p>
+          </div>
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-wider text-[#8194ab]">Budget alerts triaged</p>
+            <p className="mt-0.5 font-mono text-[15px] font-semibold text-[#0c1a2e] tabular">4 × 15 min</p>
+            <p className="text-[10px] text-[#8194ab]">1.0 h this month</p>
+          </div>
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-wider text-[#8194ab]">Rate basis</p>
+            <p className="mt-0.5 font-mono text-[15px] font-semibold text-[#0c1a2e] tabular">$85/h</p>
+            <p className="text-[10px] text-[#8194ab]">US FinOps median</p>
+          </div>
         </div>
-        <div className="flex flex-col rounded-xl border border-[#e3eaf3] bg-white p-4">
-          <p className="text-[11px] font-medium text-[#5c6f88]">Efficiency gain by month</p>
-          <div className="mt-2 flex flex-1 items-end gap-1.5" aria-hidden="true">
+      </div>
+
+      <div className="mt-3 grid gap-2.5 sm:grid-cols-[1fr_1fr_1.3fr]">
+        <Kpi label="AWS month-to-date" value="$84.2k" note="Cost Explorer, live" />
+        <Kpi label="Forecasted total" value="$102.4k" note="end of month" />
+        <div className="rounded-xl border border-[#e3eaf3] bg-white p-3.5">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-[#5c6f88]">Daily cost trend</p>
+          <div className="mt-2 flex h-12 items-end gap-1" aria-hidden="true">
             {bars.map((h, i) => (
-              <span
-                key={i}
-                className={`w-full rounded-t ${i >= 4 ? "bg-accent" : "bg-[#c9d9f2]"}`}
-                style={{ height: `${h}%` }}
-              />
+              <span key={i} className={`w-full rounded-t ${i === bars.length - 1 ? "bg-accent" : "bg-[#c9d9f2]"}`} style={{ height: `${h}%` }} />
             ))}
           </div>
         </div>
       </div>
-      <button
-        type="button"
-        tabIndex={-1}
-        className="mt-4 rounded-lg bg-[#0c1a2e] px-4 py-2 text-[12px] font-semibold text-white"
-      >
-        Export ESG report
-      </button>
     </div>
   );
 }
@@ -225,9 +298,9 @@ const SOURCE_LOGOS = [
   ["PostgreSQL", "/logos/postgresql.svg"],
 ] as const;
 
-function ObserveSatellite() {
+function DashboardSatellite() {
   return (
-    <SatelliteCard title="Connect your stack" side="left">
+    <SatelliteCard title="Connected sources" side="left">
       <ul className="flex flex-col gap-2">
         {SOURCE_LOGOS.map(([name, src]) => (
           <li key={name} className="flex items-center gap-2.5 text-[12px] font-medium text-[#22334c]">
@@ -240,32 +313,18 @@ function ObserveSatellite() {
   );
 }
 
-function OptimizeSatellite() {
+function RecommendationsSatellite() {
   return (
-    <SatelliteCard title="Agents active" side="right">
-      <ul className="flex flex-col gap-1.5">
-        {LAYER_DOTS.map(([name, color]) => (
-          <li key={name} className="flex items-center gap-2 text-[12px] font-medium text-[#22334c]">
-            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />
-            {name} agent
-          </li>
-        ))}
-      </ul>
-    </SatelliteCard>
-  );
-}
-
-function ApproveSatellite() {
-  return (
-    <SatelliteCard title="Audit trail" side="left">
+    <SatelliteCard title="Autonomy loop" side="right">
       <ul className="flex flex-col gap-2">
         {[
-          ["09:41", "Query plan applied"],
-          ["09:12", "Cache TTLs tuned"],
-          ["08:56", "2 instances resized"],
-        ].map(([t, text]) => (
-          <li key={t} className="flex items-baseline gap-2 text-[12px] text-[#41536b]">
-            <span className="font-mono text-[10px] text-[#8194ab] tabular">{t}</span>
+          ["10", "applied automatically", "bg-emerald-500"],
+          ["1", "rolled back safely", "bg-amber-500"],
+          ["0", "awaiting review", "bg-[#c1cede]"],
+        ].map(([n, text, dot]) => (
+          <li key={text} className="flex items-center gap-2.5 text-[12px] text-[#41536b]">
+            <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+            <span className="font-mono font-semibold text-[#0c1a2e] tabular">{n}</span>
             {text}
           </li>
         ))}
@@ -274,16 +333,19 @@ function ApproveSatellite() {
   );
 }
 
-function ReportSatellite() {
+function DbSatellite() {
   return (
-    <SatelliteCard title="Export formats" side="right">
-      <ul className="flex flex-col gap-1.5">
-        {["PDF board report", "CSV raw metrics", "API endpoint"].map((f) => (
-          <li key={f} className="flex items-center gap-2 text-[12px] font-medium text-[#22334c]">
-            <svg viewBox="0 0 12 12" className="h-3 w-3 text-accent" fill="none" aria-hidden="true">
-              <path d="m2.5 6.2 2.4 2.4 4.6-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            {f}
+    <SatelliteCard title="Findings by type" side="left">
+      <ul className="flex flex-col gap-2">
+        {[
+          ["Unused indexes", "10"],
+          ["Memory tuning", "1"],
+          ["Configuration", "1"],
+          ["Autovacuum", "1"],
+        ].map(([label, n]) => (
+          <li key={label} className="flex items-center justify-between text-[12px] text-[#41536b]">
+            {label}
+            <span className="font-mono font-semibold text-[#0c1a2e] tabular">{n}</span>
           </li>
         ))}
       </ul>
@@ -291,13 +353,23 @@ function ReportSatellite() {
   );
 }
 
+function CostSatellite() {
+  return (
+    <SatelliteCard title="Labor cost cut" side="right">
+      <p className="font-mono text-2xl font-semibold text-[#0c1a2e] tabular">$425</p>
+      <p className="mt-1 text-[11px] text-[#5c6f88]">5 h · ≈ 0.1 FTE-weeks this month</p>
+      <p className="mt-2 text-[10px] text-[#8194ab]">FinOps + SRE work displaced by automation</p>
+    </SatelliteCard>
+  );
+}
+
 /* ---------------- tabs + section ---------------- */
 
 const TABS = [
-  { key: "observe", label: "Observe", crumb: "Overview", panel: <ObservePanel />, satellite: <ObserveSatellite key="observe" /> },
-  { key: "optimize", label: "Optimize", crumb: "Recommendations", panel: <OptimizePanel />, satellite: <OptimizeSatellite key="optimize" /> },
-  { key: "approve", label: "Approve", crumb: "Pending changes", panel: <ApprovePanel />, satellite: <ApproveSatellite key="approve" /> },
-  { key: "report", label: "Report", crumb: "ESG & savings", panel: <ReportPanel />, satellite: <ReportSatellite key="report" /> },
+  { key: "dashboard", label: "Dashboard", crumb: "Infrastructure Overview", panel: <DashboardPanel />, satellite: <DashboardSatellite key="dashboard" /> },
+  { key: "recommendations", label: "Recommendations", crumb: "How to cut the bill", panel: <RecommendationsPanel />, satellite: <RecommendationsSatellite key="recommendations" /> },
+  { key: "database", label: "DB Optimization", crumb: "Postgres health", panel: <DbPanel />, satellite: <DbSatellite key="database" /> },
+  { key: "costs", label: "Cost Reports", crumb: "Analytics", panel: <CostPanel />, satellite: <CostSatellite key="costs" /> },
 ] as const;
 
 export function Showcase() {
@@ -355,7 +427,7 @@ export function Showcase() {
                   aria-controls={`panel-${t.key}`}
                   id={`tab-${t.key}`}
                   onClick={() => setActive(i)}
-                  className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors duration-300 sm:px-7 ${
+                  className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors duration-300 sm:px-6 ${
                     i === active ? "bg-accent text-white shadow-[0_8px_24px_-8px_rgba(0,94,255,0.7)]" : "text-fog hover:text-ink"
                   }`}
                 >
@@ -385,7 +457,7 @@ export function Showcase() {
                 </span>
               </div>
               {/* panel */}
-              <div className="relative min-h-[400px] p-5 sm:p-7">
+              <div className="relative min-h-[420px] p-5 sm:p-7">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={tab.key}
