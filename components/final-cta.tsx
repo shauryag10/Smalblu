@@ -9,11 +9,11 @@ export function FinalCta() {
         <Reveal>
           <div className="panel-blue relative overflow-hidden rounded-[28px] shadow-[0_40px_120px_-40px_rgba(0,94,255,0.55)]">
             <ButterflyWatermark
-              className="-right-[8%] -top-[42%] w-[680px] rotate-[8deg] text-white lg:w-[820px]"
+              className="-right-[8%] -top-[42%] w-[680px] text-white lg:w-[820px]"
               opacityClass="opacity-[0.1]"
             />
             <ButterflyWatermark
-              className="-bottom-[55%] -left-[14%] w-[560px] rotate-[-14deg] text-white"
+              className="-bottom-[55%] -left-[14%] w-[560px] text-white"
               opacityClass="opacity-[0.07]"
             />
             <div className="relative flex flex-col items-center px-6 py-20 text-center sm:py-24 lg:py-28">

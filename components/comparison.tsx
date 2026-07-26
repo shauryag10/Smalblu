@@ -82,7 +82,7 @@ export function Comparison() {
           <Reveal delay={0.1} className="order-1 md:order-2">
             <div className="panel-blue relative h-full overflow-hidden rounded-[20px] p-6 shadow-[0_30px_80px_-30px_rgba(0,94,255,0.5)] sm:p-8">
               <ButterflyWatermark
-                className="-right-[30%] -top-[10%] w-[420px] rotate-[10deg] text-white"
+                className="-right-[30%] -top-[10%] w-[420px] text-white"
                 opacityClass="opacity-[0.09]"
               />
               <div className="relative">

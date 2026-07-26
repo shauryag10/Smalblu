@@ -30,7 +30,7 @@ export function Hero() {
         <div className="texture-dots absolute inset-0" />
       </div>
       <ButterflyWatermark
-        className="-right-[14%] top-[-40px] w-[700px] rotate-[9deg] text-accent sm:w-[860px]"
+        className="-right-[14%] top-[-40px] w-[700px] text-accent sm:w-[860px]"
         opacityClass="opacity-[0.05]"
       />
 
