@@ -4,7 +4,7 @@
     {
       "name": "smalblu-dev",
       "runtimeExecutable": "C:\\Users\\shaur\\.local\\node-v22.14.0-win-x64\\node.exe",
-      "runtimeArgs": ["node_modules\\next\\dist\\bin\\next", "dev"],
+      "runtimeArgs": ["node_modules\\next\\dist\\bin\\next", "dev", "--turbopack"],
       "autoPort": true
     }
   ]
