@@ -62,11 +62,12 @@ function arcPath(r: number, endDeg: number) {
   return `M ${start.x.toFixed(1)} ${start.y.toFixed(1)} A ${r} ${r} 0 0 1 ${end.x.toFixed(1)} ${end.y.toFixed(1)}`;
 }
 
-// leader lines: [x1, y1, x2, y2]
+// leader lines: [x1, y1, x2, y2]; label = number shown at the free end below lg,
+// where the full callout blocks are hidden
 const LEADERS = [
-  { line: [677, 560, 818, 560], dot: [818, 560] }, // 01: horizontal, from inner arc end
-  { line: [708, 462, 748, 345], dot: [708, 462] }, // 02: diagonal, from middle arc end cap into the clear pocket
-  { line: [377, 288, 377, 148], dot: [377, 288] }, // 03: vertical, from outer arc upper-left
+  { line: [677, 560, 818, 560], dot: [818, 560], label: { x: 845, y: 560, anchor: "start" as const } }, // 01
+  { line: [708, 462, 748, 345], dot: [708, 462], label: { x: 748, y: 318, anchor: "middle" as const } }, // 02
+  { line: [377, 288, 377, 148], dot: [377, 288], label: { x: 377, y: 120, anchor: "middle" as const } }, // 03
 ];
 
 const PILLS = ["End-to-End Encrypted", "Role-Based Access", "Human Approval"];
@@ -144,6 +145,19 @@ function ArcDiagram() {
               strokeWidth="1"
             />
             <circle cx={l.dot[0]} cy={l.dot[1]} r="3.2" fill="#04080f" stroke="rgba(255,255,255,0.6)" strokeWidth="1.2" />
+            {/* number at the free end, mobile/tablet only (desktop shows full callouts) */}
+            <text
+              x={l.label.x}
+              y={l.label.y}
+              textAnchor={l.label.anchor}
+              dominantBaseline="middle"
+              className="font-mono lg:hidden"
+              fill="#80b9e7"
+              fontSize="34"
+              fontWeight="600"
+            >
+              {ARCS[i].num}
+            </text>
           </motion.g>
         ))}
       </svg>

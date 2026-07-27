@@ -109,13 +109,11 @@ export function Nav() {
             transition={{ duration: 0.28, ease: [0.22, 0.61, 0.36, 1] }}
             className="fixed inset-x-0 top-[72px] bottom-0 z-40 flex flex-col gap-2 overflow-y-auto border-t border-line bg-night/95 px-5 pb-10 pt-6 backdrop-blur-2xl md:hidden"
           >
-            {nav.map((item, i) => (
-              <motion.div
-                key={item.label}
-                initial={reduce ? false : { opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 + i * 0.05, duration: 0.3 }}
-              >
+            {/* items intentionally have no entrance animation: staggered fades
+                froze at opacity 0 on throttled mobile browsers, leaving only
+                the first link visible */}
+            {nav.map((item) => (
+              <div key={item.label}>
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
@@ -123,14 +121,9 @@ export function Nav() {
                 >
                   {item.label}
                 </Link>
-              </motion.div>
+              </div>
             ))}
-            <motion.div
-              initial={reduce ? false : { opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 + nav.length * 0.05, duration: 0.3 }}
-              className="mt-4 px-1"
-            >
+            <div className="mt-4 px-1">
               <a
                 href={site.calendly}
                 target="_blank"
@@ -140,7 +133,7 @@ export function Nav() {
               >
                 Book a Demo
               </a>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
