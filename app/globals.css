@@ -66,7 +66,8 @@
   }
 
   body {
-    background-color: var(--color-night);
+    /* darker gutter outside the framed page canvas */
+    background-color: var(--color-abyss);
     color: var(--color-ink);
     font-feature-settings: "ss01" on;
     -webkit-font-smoothing: antialiased;

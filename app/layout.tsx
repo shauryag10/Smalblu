@@ -57,8 +57,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <Nav />
-        <main id="main">{children}</main>
-        <Footer />
+        {/* framed page canvas: hairline side rails with a darker gutter outside */}
+        <div className="px-3 sm:px-6">
+          <div className="mx-auto max-w-[1440px] border-x border-white/[0.07] bg-night">
+            <main id="main">{children}</main>
+            <Footer />
+          </div>
+        </div>
       </body>
     </html>
   );
