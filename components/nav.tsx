@@ -97,7 +97,10 @@ export function Nav() {
         </nav>
       </div>
 
-      {/* mobile slide-in */}
+      {/* mobile slide-in. Positioned absolute below the header rather than
+          fixed: Safari treats the blurred fixed header as the containing
+          block for fixed children, which collapsed the panel to nothing on
+          iOS. Solid background, no backdrop blur, explicit dvh height. */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -107,7 +110,7 @@ export function Nav() {
             animate={reduce ? { opacity: 1 } : { opacity: 1, x: 0 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, x: 32 }}
             transition={{ duration: 0.28, ease: [0.22, 0.61, 0.36, 1] }}
-            className="fixed inset-x-0 top-[72px] bottom-0 z-40 flex flex-col gap-2 overflow-y-auto border-t border-line bg-night/95 px-5 pb-10 pt-6 backdrop-blur-2xl md:hidden"
+            className="absolute inset-x-0 top-full z-40 flex h-[calc(100dvh-72px)] flex-col gap-2 overflow-y-auto border-t border-line bg-night px-5 pb-10 pt-6 md:hidden"
           >
             {/* items intentionally have no entrance animation: staggered fades
                 froze at opacity 0 on throttled mobile browsers, leaving only
