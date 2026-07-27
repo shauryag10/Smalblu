@@ -481,7 +481,7 @@ function BenefitCard({
 export function Benefits() {
   const [cost, perf, prod, sust] = BENEFITS;
   return (
-    <section id="benefits" className="relative scroll-mt-24 py-24 sm:py-32" aria-labelledby="benefits-heading">
+    <section id="benefits" className="relative scroll-mt-24 py-16 sm:py-24 lg:py-32" aria-labelledby="benefits-heading">
       {/* ambient glow behind the featured area */}
       <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
         <div className="glow-orb left-[8%] top-[30%] h-[560px] w-[720px] opacity-30" />

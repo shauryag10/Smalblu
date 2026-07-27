@@ -32,7 +32,7 @@ export function Faq() {
   const reduce = useReducedMotion();
 
   return (
-    <section id="faq" className="scroll-mt-24 py-24 sm:py-32" aria-labelledby="faq-heading">
+    <section id="faq" className="scroll-mt-24 py-16 sm:py-24 lg:py-32" aria-labelledby="faq-heading">
       <div className="container-x">
         <div className="mx-auto grid max-w-5xl gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
           <Reveal>

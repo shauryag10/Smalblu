@@ -4,7 +4,7 @@ import { site } from "@/lib/site";
 
 export function FinalCta() {
   return (
-    <section className="py-24 sm:py-32" aria-labelledby="cta-heading">
+    <section className="py-16 sm:py-24 lg:py-32" aria-labelledby="cta-heading">
       <div className="container-x">
         <Reveal>
           <div className="panel-blue relative overflow-hidden rounded-[28px] shadow-[0_40px_120px_-40px_rgba(0,94,255,0.55)]">

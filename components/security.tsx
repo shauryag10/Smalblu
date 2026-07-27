@@ -186,7 +186,7 @@ export function Security() {
   return (
     <section
       id="security"
-      className="relative scroll-mt-24 border-y border-line bg-abyss/60 py-24 sm:py-32"
+      className="relative scroll-mt-24 border-y border-line bg-abyss/60 py-16 sm:py-24 lg:py-32"
       aria-labelledby="security-heading"
     >
       <div className="container-x">

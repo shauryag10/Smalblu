@@ -7,6 +7,48 @@ import { LogoMark } from "@/components/logo";
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
+/**
+ * The console is laid out at a fixed desktop width and scaled down to fit
+ * narrow viewports (like Simplismart's mobile treatment), instead of
+ * reflowing into a cramped single column. Internal layouts can therefore
+ * use unconditional grid classes: the canvas is always DESIGN_W wide.
+ */
+const DESIGN_W = 896;
+
+function ScaledFrame({ children }: { children: React.ReactNode }) {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const [height, setHeight] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const outer = outerRef.current;
+    const inner = innerRef.current;
+    if (!outer || !inner) return;
+    const update = () => {
+      const s = Math.min(1, outer.clientWidth / DESIGN_W);
+      setScale(s);
+      setHeight(s < 1 ? inner.offsetHeight * s : undefined);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(outer);
+    ro.observe(inner);
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <div ref={outerRef} style={{ height }}>
+      <div
+        ref={innerRef}
+        style={{ width: DESIGN_W, transform: `scale(${scale})`, transformOrigin: "top left" }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 /* ---------------------------------------------------------------------------
  * Light product-UI mock of the real SmalBlu console (v0.3), restyled to the
  * site's showcase format: white window, side satellite cards, four tabs
@@ -39,7 +81,7 @@ function DashboardPanel() {
         </span>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+      <div className="mt-4 grid grid-cols-4 gap-2.5">
         <Kpi label="Annual cloud spend" value="$1.24M" note="across 3 providers" />
         <Kpi label="Potential savings" value="$498k" note="annualized" accent />
         <Kpi label="Active recommendations" value="12" note="4 high impact" />
@@ -53,7 +95,7 @@ function DashboardPanel() {
             $19,668 returned
           </p>
         </div>
-        <div className="mt-3 grid gap-2.5 sm:grid-cols-3">
+        <div className="mt-3 grid grid-cols-3 gap-2.5">
           <div>
             <p className="text-[10px] font-medium uppercase tracking-wider text-[#8194ab]">Verified savings</p>
             <p className="mt-0.5 font-mono text-[15px] font-semibold text-[#0c1a2e] tabular">$19,243</p>
@@ -171,7 +213,7 @@ function DbPanel() {
         </span>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+      <div className="mt-4 grid grid-cols-4 gap-2.5">
         <Kpi label="Connection pool" value="2/100" />
         <Kpi label="Avg query latency" value="0.7ms" />
         <Kpi label="Cache hit ratio" value="100.0%" accent />
@@ -236,7 +278,7 @@ function CostPanel() {
             $425 labor cut
           </p>
         </div>
-        <div className="mt-3 grid gap-2.5 sm:grid-cols-3">
+        <div className="mt-3 grid grid-cols-3 gap-2.5">
           <div>
             <p className="text-[10px] font-medium uppercase tracking-wider text-[#8194ab]">Autonomy applies</p>
             <p className="mt-0.5 font-mono text-[15px] font-semibold text-[#0c1a2e] tabular">10 × 30 min</p>
@@ -255,7 +297,7 @@ function CostPanel() {
         </div>
       </div>
 
-      <div className="mt-3 grid gap-2.5 sm:grid-cols-[1fr_1fr_1.3fr]">
+      <div className="mt-3 grid grid-cols-[1fr_1fr_1.3fr] gap-2.5">
         <Kpi label="AWS month-to-date" value="$84.2k" note="Cost Explorer, live" />
         <Kpi label="Forecasted total" value="$102.4k" note="end of month" />
         <div className="rounded-xl border border-[#e3eaf3] bg-white p-3.5">
@@ -277,8 +319,8 @@ function SatelliteCard({ title, children, side }: { title: string; children: Rea
   const reduce = useReducedMotion();
   return (
     <motion.div
-      className={`absolute z-30 hidden w-[210px] rounded-2xl border border-[#e6edf5] bg-white p-4 shadow-[0_24px_60px_-18px_rgba(0,0,0,0.55)] lg:block ${
-        side === "left" ? "-left-16 bottom-10" : "-right-14 top-16"
+      className={`absolute z-30 w-[210px] rounded-2xl border border-[#e6edf5] bg-white p-4 shadow-[0_24px_60px_-18px_rgba(0,0,0,0.55)] ${
+        side === "left" ? "-left-8 bottom-8" : "-right-6 top-16"
       }`}
       initial={reduce ? false : { opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
@@ -388,7 +430,7 @@ export function Showcase() {
   const tab = TABS[active];
 
   return (
-    <section id="product" className="relative scroll-mt-24 overflow-hidden py-24 sm:py-32" aria-labelledby="product-heading">
+    <section id="product" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24 lg:py-32" aria-labelledby="product-heading">
       <div aria-hidden="true" className="absolute inset-0 -z-10">
         <div className="glow-orb left-1/2 top-[55%] h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/2 opacity-40" />
         <div className="texture-dots absolute inset-0" />
@@ -437,43 +479,47 @@ export function Showcase() {
             </div>
           </Reveal>
 
-          {/* console window + satellites */}
-          <Reveal delay={0.18} className="relative mx-auto mt-12 max-w-4xl">
-            <AnimatePresence mode="popLayout">{tab.satellite}</AnimatePresence>
+          {/* console window + satellites, scaled to fit narrow viewports */}
+          <Reveal delay={0.18} className="mx-auto mt-12 max-w-4xl">
+            <ScaledFrame>
+              <div className="relative">
+                <AnimatePresence mode="popLayout">{tab.satellite}</AnimatePresence>
 
-            <div className="overflow-hidden rounded-[18px] border border-white/10 bg-[#f5f8fc] shadow-[0_50px_140px_-40px_rgba(0,0,0,0.85),0_0_80px_-30px_rgba(0,94,255,0.4)]">
-              {/* chrome */}
-              <div className="flex h-12 items-center gap-3 border-b border-[#e2e9f2] bg-white px-4 sm:px-5">
-                <LogoMark className="h-4 w-auto text-accent" />
-                <span className="text-[13px] font-semibold text-[#0c1a2e]">SmalBlu Console</span>
-                <span className="hidden text-[#a5b3c7] sm:inline" aria-hidden="true">
-                  ›
-                </span>
-                <span className="hidden text-[12px] font-medium text-[#5c6f88] sm:inline">{tab.crumb}</span>
-                <span className="ml-auto hidden items-center gap-4 text-[11px] font-medium text-[#8194ab] sm:flex">
-                  Docs
-                  <span>Support</span>
-                  <span className="h-6 w-6 rounded-full border border-[#dbe4f0] bg-accent/10" aria-hidden="true" />
-                </span>
+                <div className="overflow-hidden rounded-[18px] border border-white/10 bg-[#f5f8fc] shadow-[0_50px_140px_-40px_rgba(0,0,0,0.85),0_0_80px_-30px_rgba(0,94,255,0.4)]">
+                  {/* chrome */}
+                  <div className="flex h-12 items-center gap-3 border-b border-[#e2e9f2] bg-white px-5">
+                    <LogoMark className="h-4 w-auto text-accent" />
+                    <span className="text-[13px] font-semibold text-[#0c1a2e]">SmalBlu Console</span>
+                    <span className="text-[#a5b3c7]" aria-hidden="true">
+                      ›
+                    </span>
+                    <span className="text-[12px] font-medium text-[#5c6f88]">{tab.crumb}</span>
+                    <span className="ml-auto flex items-center gap-4 text-[11px] font-medium text-[#8194ab]">
+                      Docs
+                      <span>Support</span>
+                      <span className="h-6 w-6 rounded-full border border-[#dbe4f0] bg-accent/10" aria-hidden="true" />
+                    </span>
+                  </div>
+                  {/* panel */}
+                  <div className="relative min-h-[420px] p-7">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={tab.key}
+                        role="tabpanel"
+                        id={`panel-${tab.key}`}
+                        aria-labelledby={`tab-${tab.key}`}
+                        initial={reduce ? false : { opacity: 0, y: 14 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={reduce ? undefined : { opacity: 0, y: -10 }}
+                        transition={{ duration: 0.35, ease: EASE }}
+                      >
+                        {tab.panel}
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                </div>
               </div>
-              {/* panel */}
-              <div className="relative min-h-[420px] p-5 sm:p-7">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={tab.key}
-                    role="tabpanel"
-                    id={`panel-${tab.key}`}
-                    aria-labelledby={`tab-${tab.key}`}
-                    initial={reduce ? false : { opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={reduce ? undefined : { opacity: 0, y: -10 }}
-                    transition={{ duration: 0.35, ease: EASE }}
-                  >
-                    {tab.panel}
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </div>
+            </ScaledFrame>
           </Reveal>
         </div>
       </div>

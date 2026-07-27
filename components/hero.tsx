@@ -23,7 +23,7 @@ export function Hero() {
   });
 
   return (
-    <section className="relative overflow-hidden pb-20 pt-40 sm:pb-24 sm:pt-52" aria-labelledby="hero-heading">
+    <section className="relative overflow-hidden pb-16 pt-32 sm:pb-24 sm:pt-52" aria-labelledby="hero-heading">
       {/* ambient background */}
       <div aria-hidden="true" className="absolute inset-0 -z-10">
         <div className="glow-orb left-1/2 top-[-320px] h-[720px] w-[1100px] -translate-x-1/2 animate-drift opacity-60" />

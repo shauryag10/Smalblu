@@ -16,7 +16,7 @@ type Pillar = {
 
 const PILLARS: Pillar[] = [
   { name: "Microsoft Azure", src: "/logos/azure.svg", left: "2%", height: "56%" },
-  { name: "PostgreSQL", src: "/logos/postgresql.svg", left: "9%", height: "32%", front: true },
+  { name: "PostgreSQL", src: "/logos/postgresql.svg", left: "9%", height: "32%", front: true, hideOnMobile: true },
   { name: "AWS", src: "/logos/aws.svg", left: "17%", height: "72%" },
   { name: "MySQL", src: "/logos/mysql-icon.svg", left: "25%", height: "40%", front: true, hideOnMobile: true },
   { name: "Google Cloud", src: "/logos/google-cloud.svg", left: "33%", height: "84%" },
@@ -26,7 +26,7 @@ const PILLARS: Pillar[] = [
   { name: "Kubernetes", src: "/logos/kubernetes.svg", left: "65%", height: "82%" },
   { name: "Redis", src: "/logos/redis.svg", left: "73%", height: "30%", front: true, hideOnMobile: true },
   { name: "Snowflake", src: "/logos/snowflake-icon.svg", left: "81%", height: "66%" },
-  { name: "Terraform", src: "/logos/terraform-icon.svg", left: "89%", height: "36%", front: true },
+  { name: "Terraform", src: "/logos/terraform-icon.svg", left: "89%", height: "36%", front: true, hideOnMobile: true },
   { name: "Prometheus", src: "/logos/prometheus.svg", left: "95%", height: "58%", hideOnMobile: true },
 ];
 
@@ -68,7 +68,7 @@ function PillarColumn({ pillar, index }: { pillar: Pillar; index: number }) {
 
 export function Integrations() {
   return (
-    <section id="integrations" className="scroll-mt-24 overflow-hidden border-t border-line py-24 sm:py-32" aria-labelledby="integrations-heading">
+    <section id="integrations" className="scroll-mt-24 overflow-hidden border-t border-line py-16 sm:py-24 lg:py-32" aria-labelledby="integrations-heading">
       <div className="container-x">
         <div className="grid items-center gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10">
           <Reveal>
@@ -88,9 +88,12 @@ export function Integrations() {
           <div className="relative h-[380px] sm:h-[460px] lg:h-[520px]" role="img" aria-label="SmalBlu integration ecosystem: AWS, Microsoft Azure, Google Cloud, PostgreSQL, MySQL, MongoDB, Kubernetes, Docker, Grafana, Prometheus, Redis, Snowflake, and Terraform">
             {/* soft glow behind the field */}
             <div aria-hidden="true" className="glow-orb left-1/2 top-1/2 h-[420px] w-[560px] -translate-x-1/2 -translate-y-1/2 opacity-30" />
-            {PILLARS.map((p, i) => (
-              <PillarColumn key={p.name} pillar={p} index={i} />
-            ))}
+            {/* inset positioning box keeps edge tiles fully inside on small screens */}
+            <div className="absolute inset-y-0 left-10 right-10 sm:inset-x-6 lg:inset-x-0">
+              {PILLARS.map((p, i) => (
+                <PillarColumn key={p.name} pillar={p} index={i} />
+              ))}
+            </div>
           </div>
         </div>
       </div>

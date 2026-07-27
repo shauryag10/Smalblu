@@ -45,7 +45,7 @@ function DashIcon() {
 
 export function Comparison() {
   return (
-    <section className="py-24 sm:py-32" aria-labelledby="comparison-heading">
+    <section className="py-16 sm:py-24 lg:py-32" aria-labelledby="comparison-heading">
       <div className="container-x">
         <Reveal className="max-w-3xl">
           <p className="kicker">Why smalBlu</p>

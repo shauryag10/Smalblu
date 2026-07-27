@@ -100,7 +100,7 @@ export function Layers() {
   }, [reduce, paused, inView]);
 
   return (
-    <section id="how-it-works" className="relative scroll-mt-24 py-24 sm:py-32" aria-labelledby="layers-heading">
+    <section id="how-it-works" className="relative scroll-mt-24 py-16 sm:py-24 lg:py-32" aria-labelledby="layers-heading">
       <div className="container-x">
         <Reveal className="max-w-3xl">
           <p className="kicker">How it works</p>
