@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
 echo ===============================================
-echo   Push "Smalblu website" to GitHub repo smalblu
+echo   Push "Smalblu website" to GitHub repo Smalblu
 echo ===============================================
 echo.
 
@@ -16,7 +16,7 @@ if errorlevel 1 (
 
 set /p GHUSER=Your GitHub username:
 if "%GHUSER%"=="" (echo No username given. & pause & exit /b 1)
-set REPOURL=https://github.com/%GHUSER%/smalblu.git
+set REPOURL=https://github.com/%GHUSER%/Smalblu.git
 
 echo.
 echo Remote: %REPOURL%
@@ -60,7 +60,7 @@ if "%CHOICE%"=="2" goto FORCE
 goto CANCEL
 
 :MERGE
-git merge origin/main --allow-unrelated-histories -m "Merge remote smalblu into local website"
+git merge origin/main --allow-unrelated-histories -m "Merge remote Smalblu into local website"
 if errorlevel 1 (
   echo.
   echo MERGE CONFLICTS. Resolve the listed files, then run:
@@ -88,6 +88,6 @@ if errorlevel 1 (
   echo from https://github.com/settings/tokens instead of your password.
 ) else (
   echo.
-  echo Done: https://github.com/%GHUSER%/smalblu
+  echo Done: https://github.com/%GHUSER%/Smalblu
 )
 pause
