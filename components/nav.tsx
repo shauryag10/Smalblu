@@ -45,7 +45,9 @@ export function Nav() {
           : "border-b border-transparent bg-transparent"
       }`}
     >
-      <nav aria-label="Main" className="container-x flex h-[72px] items-center justify-between gap-6">
+      {/* mirrors the page frame's geometry so the logo sits flush at the left rail */}
+      <div className="px-3 sm:px-6">
+        <nav aria-label="Main" className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between gap-6">
         <Link
           href="/"
           aria-label="SmalBlu home"
@@ -106,7 +108,8 @@ export function Nav() {
             />
           </button>
         </div>
-      </nav>
+        </nav>
+      </div>
 
       {/* mobile slide-in */}
       <AnimatePresence>
