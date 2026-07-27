@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/reveal";
 import { LogoMark } from "@/components/logo";
 
@@ -72,8 +73,14 @@ const PILLS = ["End-to-End Encrypted", "Role-Based Access", "Human Approval"];
 
 function ArcDiagram() {
   const reduce = useReducedMotion();
+  // Observe the HTML wrapper, not the SVG paths: IntersectionObserver on SVG
+  // child elements is unreliable on mobile WebKit, which left the arcs stuck
+  // in their hidden pre-animation state on phones.
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -60px 0px" });
+  const show = reduce || inView;
   return (
-    <div className="relative mx-auto w-full max-w-[980px]">
+    <div ref={ref} className="relative mx-auto w-full max-w-[980px]">
       <svg
         viewBox="0 0 1000 620"
         className="h-auto w-full"
@@ -114,9 +121,8 @@ function ArcDiagram() {
             strokeWidth="54"
             style={{ filter: "drop-shadow(0 0 22px rgba(0,94,255,0.3))" }}
             strokeDasharray={a.length}
-            initial={reduce ? { strokeDashoffset: 0 } : { strokeDashoffset: a.length }}
-            whileInView={{ strokeDashoffset: 0 }}
-            viewport={{ once: true, margin: "0px 0px -80px 0px" }}
+            initial={false}
+            animate={{ strokeDashoffset: show ? 0 : a.length }}
             transition={{ duration: 1.3, delay: a.delay, ease: EASE }}
           />
         ))}
@@ -125,9 +131,8 @@ function ArcDiagram() {
         {LEADERS.map((l, i) => (
           <motion.g
             key={i}
-            initial={reduce ? { opacity: 1 } : { opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            initial={false}
+            animate={{ opacity: show ? 1 : 0 }}
             transition={{ duration: 0.5, delay: 1 + i * 0.15 }}
           >
             <line

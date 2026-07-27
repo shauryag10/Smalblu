@@ -1,2 +1,4 @@
  
 Remote: https://github.com/shauryag10/Smalblu.git 
+On branch main
+nothing to commit, working tree clean
