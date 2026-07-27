@@ -8,17 +8,9 @@ import { nav, site } from "@/lib/site";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // close on Escape, lock body scroll, return focus to the toggle
   useEffect(() => {
@@ -38,13 +30,7 @@ export function Nav() {
   }, [open]);
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${
-        scrolled || open
-          ? "border-b border-line bg-night/75 backdrop-blur-xl"
-          : "border-b border-transparent bg-transparent"
-      }`}
-    >
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-line bg-night/75 backdrop-blur-xl">
       {/* mirrors the page frame's geometry so the logo sits flush at the left rail */}
       <div className="px-3 sm:px-6">
         <nav aria-label="Main" className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between gap-6">

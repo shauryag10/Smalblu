@@ -32,7 +32,7 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col-reverse items-start justify-between gap-6 border-t border-line pt-8 md:flex-row md:items-center">
-          <p className="text-sm text-faint">© 2026 SmalBlu. All rights reserved.</p>
+          <p className="text-sm text-faint">© 2023 SmalBlu Technologies Pvt Ltd. All rights reserved.</p>
           <div className="flex items-center gap-5">
             <a
               href={`mailto:${site.email}`}
