@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/reveal";
 import { LogoMark } from "@/components/logo";
 
@@ -10,9 +11,12 @@ const EASE = [0.22, 0.61, 0.36, 1] as const;
 
 function CrossLayerViz() {
   const reduce = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -40px 0px" });
+  const show = reduce || inView;
   const layers = ["User", "Application", "Compute", "Network", "Database", "Storage"];
   return (
-    <div className="relative mx-auto h-[228px] w-full max-w-[400px]" aria-hidden="true">
+    <div ref={ref} className="relative mx-auto h-[228px] w-full max-w-[400px]" aria-hidden="true">
       {/* beam */}
       <div className="absolute left-1/2 top-1 h-[calc(100%-8px)] w-px -translate-x-1/2 bg-gradient-to-b from-accent/70 via-accent/30 to-accent/70" />
       {/* traveling pulse */}
@@ -32,9 +36,8 @@ function CrossLayerViz() {
               : "border-white/[0.09] bg-white/[0.03]"
           }`}
           style={{ top: `${i * 39}px` }}
-          initial={reduce ? false : { opacity: 0, x: i % 2 ? 18 : -18 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
+          initial={false}
+          animate={{ opacity: show ? 1 : 0, x: show ? 0 : i % 2 ? 18 : -18 }}
           transition={{ duration: 0.5, delay: 0.1 + i * 0.07, ease: EASE }}
         >
           <span className={`font-mono text-[10px] tracking-wider ${i === 2 ? "text-accent-3" : "text-faint"}`}>
@@ -82,12 +85,13 @@ function AgentOrbitViz() {
         <span className="absolute bottom-[6%] left-[26%] h-2 w-2 rounded-full bg-[#80b9e7] shadow-[0_0_10px_rgba(128,185,231,0.8)]" />
       </motion.div>
 
-      {/* pulse */}
+      {/* pulse: three keyframes so the ring fades in from the core instead of
+          popping back at full opacity when the loop wraps */}
       {!reduce && (
         <motion.div
           className="absolute inset-[76px] rounded-full border border-accent/40"
-          animate={{ scale: [1, 1.55], opacity: [0.7, 0] }}
-          transition={{ duration: 2.8, repeat: Infinity, ease: "easeOut" }}
+          animate={{ scale: [1, 1.14, 1.55], opacity: [0, 0.7, 0] }}
+          transition={{ duration: 2.8, repeat: Infinity, ease: "easeOut", times: [0, 0.22, 1] }}
         />
       )}
 
@@ -132,8 +136,13 @@ function NlpViz() {
 
 function AnomalyViz() {
   const reduce = useReducedMotion();
+  // observe the HTML wrapper: IntersectionObserver on SVG paths is unreliable
+  // on mobile WebKit, which left the line invisible on phones
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -40px 0px" });
+  const show = reduce || inView;
   return (
-    <div className="relative w-full" aria-hidden="true">
+    <div ref={ref} className="relative w-full" aria-hidden="true">
       <svg viewBox="0 0 240 84" className="h-auto w-full">
         <line x1="0" y1="26" x2="240" y2="26" stroke="rgba(255,255,255,0.1)" strokeWidth="1" strokeDasharray="3 4" />
         <motion.path
@@ -142,9 +151,8 @@ function AnomalyViz() {
           stroke="#4096db"
           strokeWidth="1.8"
           strokeLinecap="round"
-          initial={reduce ? false : { pathLength: 0 }}
-          whileInView={{ pathLength: 1 }}
-          viewport={{ once: true }}
+          initial={false}
+          animate={{ pathLength: show ? 1 : 0 }}
           transition={{ duration: 1.2, ease: "easeInOut", delay: 0.15 }}
         />
         <circle cx="132" cy="22" r="3.5" fill="#5aa2ff" />
@@ -153,8 +161,8 @@ function AnomalyViz() {
         <motion.span
           className="absolute rounded-full border border-accent/60"
           style={{ left: "52.4%", top: "19%", width: 22, height: 22, transform: "translate(-50%, -50%)" }}
-          animate={{ scale: [0.6, 1.6], opacity: [0.8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+          animate={{ scale: [0.6, 1, 1.6], opacity: [0, 0.8, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeOut", times: [0, 0.25, 1] }}
         />
       )}
       <span className="absolute right-0 top-0 rounded-md border border-accent/30 bg-accent/10 px-2 py-0.5 font-mono text-[10px] text-accent-3">
@@ -166,6 +174,10 @@ function AnomalyViz() {
 
 function EcosystemViz() {
   const reduce = useReducedMotion();
+  // same mobile-WebKit guard as AnomalyViz: observe the wrapper, not the paths
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -40px 0px" });
+  const show = reduce || inView;
   const sources = [
     /* database */
     <svg key="db" viewBox="0 0 20 20" fill="none" className="h-4 w-4">
@@ -183,15 +195,14 @@ function EcosystemViz() {
     </svg>,
   ];
   return (
-    <div className="relative flex h-[112px] w-full items-center" aria-hidden="true">
+    <div ref={ref} className="relative flex h-[112px] w-full items-center" aria-hidden="true">
       <div className="flex flex-col gap-2">
         {sources.map((icon, i) => (
           <motion.span
             key={i}
             className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-fog"
-            initial={reduce ? false : { opacity: 0, x: -12 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            initial={false}
+            animate={{ opacity: show ? 1 : 0, x: show ? 0 : -12 }}
             transition={{ duration: 0.4, delay: 0.1 + i * 0.09, ease: EASE }}
           >
             {icon}
@@ -208,9 +219,8 @@ function EcosystemViz() {
             fill="none"
             stroke="rgba(64,150,219,0.35)"
             strokeWidth="1.2"
-            initial={reduce ? false : { pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            viewport={{ once: true }}
+            initial={false}
+            animate={{ pathLength: show ? 1 : 0 }}
             transition={{ duration: 0.7, delay: 0.25 + i * 0.08, ease: "easeOut" }}
           />
         ))}
@@ -221,8 +231,8 @@ function EcosystemViz() {
         {!reduce && (
           <motion.span
             className="absolute inset-0 rounded-xl border border-accent/40"
-            animate={{ scale: [1, 1.35], opacity: [0.6, 0] }}
-            transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut" }}
+            animate={{ scale: [1, 1.09, 1.35], opacity: [0, 0.6, 0] }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut", times: [0, 0.22, 1] }}
           />
         )}
         <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5">
@@ -236,16 +246,18 @@ function EcosystemViz() {
 
 function EsgViz() {
   const reduce = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -40px 0px" });
+  const show = reduce || inView;
   const rows = ["CO₂ avoided", "Energy per query", "Audit-ready export"];
   return (
-    <div className="w-full" aria-hidden="true">
+    <div ref={ref} className="w-full" aria-hidden="true">
       {rows.map((label, i) => (
         <motion.div
           key={label}
           className="flex items-center gap-2.5 border-t border-white/[0.07] py-2.5 first:border-t-0"
-          initial={reduce ? false : { opacity: 0, x: -14 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
+          initial={false}
+          animate={{ opacity: show ? 1 : 0, x: show ? 0 : -14 }}
           transition={{ duration: 0.4, delay: 0.15 + i * 0.1, ease: EASE }}
         >
           <span className="flex h-4.5 w-4.5 items-center justify-center rounded-full border border-accent/40 bg-accent/10">

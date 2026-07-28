@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Counter } from "@/components/counter";
 import { Reveal } from "@/components/reveal";
 
@@ -144,6 +145,11 @@ function CardFrame({
 /** Descending cloud-waste line in a tall 340x520 space (matches its region, no distortion). */
 function CostReductionChart() {
   const reduce = useReducedMotion();
+  // observe the HTML wrapper: IntersectionObserver on SVG children is
+  // unreliable on mobile WebKit and left these visuals blank on phones
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -40px 0px" });
+  const show = reduce || inView;
   // stepped-terrace descent: near-flat shelves alternating with smooth drops,
   // strictly monotonic, entering at the left edge and exiting mid-right.
   // Drawn in a fixed 4:5 box (320x400).
@@ -153,7 +159,7 @@ function CostReductionChart() {
     "C 214 202, 222 202, 232 204 C 244 206, 252 226, 262 244 C 272 250, 280 252, 288 256 " +
     "C 298 260, 310 274, 320 290";
   return (
-    <div className="relative w-full lg:aspect-[4/5] lg:max-h-[450px]" aria-hidden="true">
+    <div ref={ref} className="relative w-full lg:aspect-[4/5] lg:max-h-[450px]" aria-hidden="true">
       <svg viewBox="0 0 320 400" preserveAspectRatio="none" className="h-full min-h-[280px] w-full lg:min-h-0">
         <defs>
           <linearGradient id="cost-chart-area" x1="0" y1="0" x2="0" y2="1">
@@ -178,9 +184,8 @@ function CostReductionChart() {
         <motion.path
           d={`${line} L320 400 L0 400 Z`}
           fill="url(#cost-chart-area)"
-          initial={reduce ? { opacity: 1 } : { opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          initial={false}
+          animate={{ opacity: show ? 1 : 0 }}
           transition={{ duration: 0.9, delay: 1.1 }}
         />
         {/* halo under-stroke */}
@@ -191,9 +196,8 @@ function CostReductionChart() {
           strokeWidth="9"
           strokeLinecap="round"
           vectorEffect="non-scaling-stroke"
-          initial={reduce ? { pathLength: 1 } : { pathLength: 0 }}
-          whileInView={{ pathLength: 1 }}
-          viewport={{ once: true }}
+          initial={false}
+          animate={{ pathLength: show ? 1 : 0 }}
           transition={{ duration: 1.7, delay: 0.3, ease: "easeInOut" }}
         />
         <motion.path
@@ -205,9 +209,8 @@ function CostReductionChart() {
           strokeLinejoin="round"
           vectorEffect="non-scaling-stroke"
           style={{ filter: "drop-shadow(0 0 10px rgba(0,94,255,0.7))" }}
-          initial={reduce ? { pathLength: 1 } : { pathLength: 0 }}
-          whileInView={{ pathLength: 1 }}
-          viewport={{ once: true }}
+          initial={false}
+          animate={{ pathLength: show ? 1 : 0 }}
           transition={{ duration: 1.7, delay: 0.3, ease: "easeInOut" }}
         />
       </svg>
@@ -215,9 +218,8 @@ function CostReductionChart() {
       <motion.span
         className="absolute"
         style={{ left: "58.75%", top: "40.6%" }}
-        initial={reduce ? { opacity: 1 } : { opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
+        initial={false}
+        animate={{ opacity: show ? 1 : 0 }}
         transition={{ duration: 0.4, delay: 1.2 }}
       >
         {!reduce && (
@@ -232,9 +234,8 @@ function CostReductionChart() {
       </motion.span>
       <motion.span
         className="absolute bottom-[9%] left-1/2 inline-flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-[#0b1628]/90 px-3.5 py-1.5 text-[12px] font-medium text-fog backdrop-blur-sm"
-        initial={reduce ? { opacity: 1 } : { opacity: 0, y: 8 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        initial={false}
+        animate={{ opacity: show ? 1 : 0, y: show ? 0 : 8 }}
         transition={{ duration: 0.5, delay: 1.35, ease: EASE }}
       >
         <svg viewBox="0 0 12 12" className="h-3 w-3 text-accent-2" fill="none">
@@ -254,6 +255,9 @@ function CostReductionChart() {
  */
 function PerformanceGauge() {
   const reduce = useReducedMotion();
+  const ref = useRef<SVGSVGElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -40px 0px" });
+  const show = reduce || inView;
   const LEN = 340.3;
   const REST = LEN * 0.08; // 92% filled
   const ARC = "M 54.7 140.2 A 78 78 0 1 1 174.7 183.9";
@@ -266,7 +270,7 @@ function PerformanceGauge() {
     b: polar(66, deg),
   }));
   return (
-    <svg viewBox="0 0 260 200" className="h-auto w-[250px] lg:w-[285px]" aria-hidden="true">
+    <svg ref={ref} viewBox="0 0 260 200" className="h-auto w-[250px] lg:w-[285px]" aria-hidden="true">
       <defs>
         <linearGradient id="perf-gauge-grad" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#16418f" />
@@ -315,17 +319,15 @@ function PerformanceGauge() {
         strokeLinecap="round"
         strokeDasharray={LEN}
         style={{ filter: "drop-shadow(0 0 12px rgba(0,94,255,0.55))" }}
-        initial={reduce ? { strokeDashoffset: REST } : { strokeDashoffset: LEN }}
-        whileInView={{ strokeDashoffset: REST }}
-        viewport={{ once: true }}
+        initial={false}
+        animate={{ strokeDashoffset: show ? REST : LEN }}
         transition={{ duration: 1.6, delay: 0.35, ease: EASE }}
       />
 
       {/* glowing tip dot at the 92% point (-35°) */}
       <motion.g
-        initial={reduce ? { opacity: 1 } : { opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
+        initial={false}
+        animate={{ opacity: show ? 1 : 0 }}
         transition={{ duration: 0.4, delay: 1.7 }}
       >
         <circle cx="193.9" cy="164.7" r="9" fill="rgba(90,162,255,0.25)" />
