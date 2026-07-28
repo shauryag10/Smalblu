@@ -121,19 +121,24 @@ function CardFrame({
 }) {
   return (
     <article
-      className={`group relative h-full overflow-hidden rounded-[24px] border transition-all duration-400 motion-safe:hover:-translate-y-1 ${
+      className={`group relative h-full overflow-hidden rounded-[24px] border transition-[border-color,box-shadow,transform] duration-400 motion-safe:hover:-translate-y-1 ${
         featured
           ? "border-accent/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.09),0_0_90px_-24px_rgba(0,94,255,0.6)] hover:border-accent/60 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.09),0_24px_100px_-24px_rgba(0,94,255,0.7)]"
           : "border-accent/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_55px_-24px_rgba(0,94,255,0.4)] hover:border-accent/45 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_20px_70px_-24px_rgba(0,94,255,0.55)]"
       } ${className ?? ""}`}
       style={{ background: "linear-gradient(160deg, #0d1a30 0%, #071021 55%, #050b16 100%)" }}
     >
-      {/* luminous corner wash */}
+      {/* Luminous corner wash. Painted as a radial gradient rather than a
+          blurred layer: a 320px blur(90px) per card pegged mobile GPUs and
+          made the whole section stutter while scrolling. */}
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute -left-28 -top-28 h-80 w-80 rounded-full blur-[90px] transition-opacity duration-500 ${
-          featured ? "bg-accent/[0.2]" : "bg-accent/[0.13]"
-        } opacity-90 group-hover:opacity-100`}
+        className="pointer-events-none absolute -left-28 -top-28 h-80 w-80 rounded-full transition-opacity duration-500"
+        style={{
+          background: `radial-gradient(closest-side, rgba(0,94,255,${
+            featured ? 0.26 : 0.17
+          }), rgba(0,94,255,${featured ? 0.09 : 0.06}) 55%, transparent 78%)`,
+        }}
       />
       {children}
     </article>
@@ -208,7 +213,6 @@ function CostReductionChart() {
           strokeLinecap="round"
           strokeLinejoin="round"
           vectorEffect="non-scaling-stroke"
-          style={{ filter: "drop-shadow(0 0 10px rgba(0,94,255,0.7))" }}
           initial={false}
           animate={{ pathLength: show ? 1 : 0 }}
           transition={{ duration: 1.7, delay: 0.3, ease: "easeInOut" }}
@@ -310,7 +314,21 @@ function PerformanceGauge() {
       {/* faint unfilled tail */}
       <path d={ARC} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" strokeLinecap="round" />
 
-      {/* main sweep */}
+      {/* Halo + main sweep. The glow is a wider low-opacity companion stroke
+          rather than a drop-shadow filter: a blur filter on a path whose
+          dash offset changes every frame re-rasters the whole gauge each
+          frame, which is what made this section stutter on phones. */}
+      <motion.path
+        d={ARC}
+        fill="none"
+        stroke="rgba(0,94,255,0.28)"
+        strokeWidth="17"
+        strokeLinecap="round"
+        strokeDasharray={LEN}
+        initial={false}
+        animate={{ strokeDashoffset: show ? REST : LEN }}
+        transition={{ duration: 1.6, delay: 0.35, ease: EASE }}
+      />
       <motion.path
         d={ARC}
         fill="none"
@@ -318,7 +336,6 @@ function PerformanceGauge() {
         strokeWidth="9"
         strokeLinecap="round"
         strokeDasharray={LEN}
-        style={{ filter: "drop-shadow(0 0 12px rgba(0,94,255,0.55))" }}
         initial={false}
         animate={{ strokeDashoffset: show ? REST : LEN }}
         transition={{ duration: 1.6, delay: 0.35, ease: EASE }}
@@ -396,9 +413,11 @@ function EarthDotPattern() {
   const R = 150;
   const CX = 172;
   const CY = 152;
+  // 6-degree sampling (not 4): the finer grid put ~1150 circles in the DOM and
+  // measurably slowed scrolling on phones for no visible gain at this size
   const dots: { x: number; y: number; land: boolean; fade: number }[] = [];
-  for (let lat = -88; lat <= 88; lat += 4) {
-    for (let lon = -180; lon < 180; lon += 4) {
+  for (let lat = -87; lat <= 87; lat += 6) {
+    for (let lon = -180; lon < 180; lon += 6) {
       const p = lat * D;
       const l = lon * D;
       const cosc = Math.sin(lat0) * Math.sin(p) + Math.cos(lat0) * Math.cos(p) * Math.cos(l - lon0);
@@ -421,9 +440,9 @@ function EarthDotPattern() {
       <svg viewBox="0 0 180 320" className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid slice">
         {dots.map((d, i) =>
           d.land ? (
-            <circle key={i} cx={d.x} cy={d.y} r="1.7" fill="#6db0ff" opacity={+(0.22 + 0.5 * d.fade).toFixed(2)} />
+            <circle key={i} cx={d.x} cy={d.y} r="2" fill="#6db0ff" opacity={+(0.22 + 0.5 * d.fade).toFixed(2)} />
           ) : (
-            <circle key={i} cx={d.x} cy={d.y} r="1.1" fill="#4d9aff" opacity={+(0.04 + 0.07 * d.fade).toFixed(2)} />
+            <circle key={i} cx={d.x} cy={d.y} r="1.3" fill="#4d9aff" opacity={+(0.05 + 0.08 * d.fade).toFixed(2)} />
           ),
         )}
       </svg>
