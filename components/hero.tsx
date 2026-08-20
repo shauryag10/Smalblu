@@ -9,9 +9,9 @@ const EASE = [0.22, 0.61, 0.36, 1] as const;
 
 const STATS = [
   { value: 40, suffix: "%", label: "lower cloud spend" },
+  { value: 35, suffix: "%", label: "energy saved" },
   { value: 30, suffix: "%", label: "faster systems" },
   { value: 70, suffix: "%", label: "engineering time saved" },
-  { value: 35, suffix: "%", label: "smaller carbon footprint" },
 ];
 
 export function Hero() {
@@ -44,8 +44,8 @@ export function Hero() {
         </motion.h1>
 
         <motion.p {...fadeUp(0.2)} className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-fog sm:text-xl">
-          SmalBlu&apos;s AI agents work 24/7 to reduce your costs by 40% and boost performance by
-          30%, while you focus on what matters most.
+          SmalBlu&apos;s AI agents work 24/7 to cut your costs by 40% and the energy your
+          infrastructure burns by 35%, while you focus on what matters most.
         </motion.p>
 
         <motion.div {...fadeUp(0.34)} className="mt-10 flex flex-col items-center gap-3 sm:flex-row">

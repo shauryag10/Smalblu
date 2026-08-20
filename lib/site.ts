@@ -5,7 +5,7 @@ export const site = {
   calendly: "https://calendly.com/garv-smalblu",
   linkedin: "https://www.linkedin.com/company/smalblu/",
   description:
-    "SmalBlu's AI agents autonomously optimize all six layers of your data infrastructure, cutting cloud costs by up to 40%, boosting performance by 30%, and reducing data carbon footprint by up to 35%. Cloud-agnostic, API-only, metadata-only.",
+    "SmalBlu's AI agents autonomously optimize all six layers of your data infrastructure, cutting cloud costs by up to 40%, saving up to 35% of the energy your infrastructure burns, and boosting performance by 30%. Cloud-agnostic, API-only, metadata-only.",
 } as const;
 
 export const nav = [

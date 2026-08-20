@@ -27,8 +27,8 @@ export function FinalCta() {
                 Start Optimizing with SmalBlu
               </h2>
               <p className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-white/90 sm:text-xl">
-                Unlock autonomous infrastructure optimization to drive cost savings and
-                sustainable growth with AI.
+                Unlock autonomous infrastructure optimization that cuts your cloud costs and the
+                energy they burn, with AI.
               </p>
               <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
                 <a

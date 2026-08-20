@@ -6,7 +6,7 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Book a SmalBlu demo or get in touch. See how AI agents can cut your cloud costs by up to 40%.",
+    "Book a SmalBlu demo or get in touch. See how AI agents can cut your cloud costs by up to 40% and energy use by up to 35%.",
   alternates: { canonical: "/contact" },
 };
 

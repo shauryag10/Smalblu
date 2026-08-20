@@ -73,7 +73,7 @@ function DashboardPanel() {
       <div className="flex items-center justify-between">
         <div>
           <h4 className="text-[15px] font-semibold text-[#0c1a2e]">Infrastructure Overview</h4>
-          <p className="text-[11px] text-[#8194ab]">Real-time cost, performance, and sustainability metrics</p>
+          <p className="text-[11px] text-[#8194ab]">Real-time cost, energy, and performance metrics</p>
         </div>
         <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-600">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />

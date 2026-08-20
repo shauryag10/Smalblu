@@ -10,7 +10,7 @@ const EASE = [0.22, 0.61, 0.36, 1] as const;
 /* ---------------- data ---------------- */
 
 type Benefit = {
-  key: "cost" | "perf" | "prod" | "sust";
+  key: "cost" | "energy" | "perf" | "prod";
   category: string;
   value: number;
   label: string;
@@ -26,6 +26,13 @@ const BENEFITS: Benefit[] = [
     desc: "Continuous cross-layer optimization eliminates waste the moment an agent finds it.",
   },
   {
+    key: "energy",
+    category: "Energy efficiency",
+    value: 35,
+    label: "Energy saved",
+    desc: "Every optimization strips wasted energy out of your infrastructure, with audit-ready reporting to prove it.",
+  },
+  {
     key: "perf",
     category: "Performance",
     value: 30,
@@ -38,13 +45,6 @@ const BENEFITS: Benefit[] = [
     value: 70,
     label: "Engineering time saved",
     desc: "Routine tuning goes to the agents. Your engineers go back to building product.",
-  },
-  {
-    key: "sust",
-    category: "Sustainability",
-    value: 35,
-    label: "Smaller carbon footprint",
-    desc: "Every optimization removes wasted energy, with ESG reporting to prove it.",
   },
 ];
 
@@ -436,7 +436,7 @@ function EarthDotPattern() {
     }
   }
   return (
-    <div className="pointer-events-none absolute inset-y-0 right-0 w-[56%] overflow-hidden" aria-hidden="true">
+    <div className="pointer-events-none absolute inset-y-0 right-0 w-[46%] overflow-hidden" aria-hidden="true">
       <svg viewBox="0 0 180 320" className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid slice">
         {dots.map((d, i) =>
           d.land ? (
@@ -497,10 +497,41 @@ function BenefitCard({
   );
 }
 
+/** Full-width closing band: the productivity stat laid out horizontally. */
+function ProductivityBand({ benefit, index }: { benefit: Benefit; index: number }) {
+  return (
+    <Reveal delay={0.2}>
+      <CardFrame>
+        <DotGridPattern />
+        <div className="relative grid gap-7 p-8 md:grid-cols-[auto_1fr] md:items-center md:gap-12 lg:gap-16">
+          <div>
+            <p className="font-semibold leading-none tracking-[-0.03em] text-ink tabular [text-shadow:0_0_38px_rgba(0,94,255,0.4)] text-[4rem]">
+              <Counter to={benefit.value} duration={1.6} delay={0.4} />
+              <span className="text-[#4d9aff]">%</span>
+            </p>
+            <MetricProgress value={benefit.value} delay={0.55} className="mt-5" />
+          </div>
+          <div>
+            <div className="flex items-baseline gap-3">
+              <span className="font-mono text-sm font-semibold text-accent-2 tabular">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <span aria-hidden="true" className="h-3.5 w-px self-center bg-white/20" />
+              <p className="text-[15px] font-semibold tracking-tight text-fog">{benefit.category}</p>
+            </div>
+            <h3 className="mt-3 text-xl font-semibold tracking-tight text-ink">{benefit.label}</h3>
+            <p className="mt-2 max-w-2xl text-[0.9375rem] leading-relaxed text-fog">{benefit.desc}</p>
+          </div>
+        </div>
+      </CardFrame>
+    </Reveal>
+  );
+}
+
 /* ---------------- section ---------------- */
 
 export function Benefits() {
-  const [cost, perf, prod, sust] = BENEFITS;
+  const [cost, energy, perf, prod] = BENEFITS;
   return (
     <section id="benefits" className="relative scroll-mt-24 py-16 sm:py-24 lg:py-32" aria-labelledby="benefits-heading">
       {/* ambient glow behind the featured area */}
@@ -530,12 +561,12 @@ export function Benefits() {
         <div className="mt-12 grid gap-4 lg:mt-14 lg:grid-cols-2">
           <FeaturedBenefitCard benefit={cost} index={0} />
           <div className="grid content-stretch gap-4">
-            <BenefitCard benefit={perf} index={1} visual={<PerformanceGauge />} delay={0.08} />
-            <div className="grid gap-4 sm:grid-cols-2">
-              <BenefitCard benefit={prod} index={2} decoration={<DotGridPattern />} delay={0.14} />
-              <BenefitCard benefit={sust} index={3} decoration={<EarthDotPattern />} delay={0.2} />
-            </div>
+            <BenefitCard benefit={energy} index={1} decoration={<EarthDotPattern />} delay={0.08} />
+            <BenefitCard benefit={perf} index={2} visual={<PerformanceGauge />} delay={0.14} />
           </div>
+        </div>
+        <div className="mt-4">
+          <ProductivityBand benefit={prod} index={3} />
         </div>
       </div>
     </section>

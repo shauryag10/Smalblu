@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     "FinOps",
     "cross-layer optimization",
     "database optimization",
-    "cloud sustainability",
+    "cloud energy efficiency",
     "AI agents",
   ],
   authors: [{ name: "SmalBlu" }],
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SmalBlu | Your AI Infrastructure Optimization Team",
     description:
-      "AI agents that work 24/7 to cut cloud costs by 40%, boost performance by 30%, and reduce data carbon footprint by 35%.",
+      "AI agents that work 24/7 to cut cloud costs by 40%, save 35% of infrastructure energy, and boost performance by 30%.",
   },
   robots: { index: true, follow: true },
 };

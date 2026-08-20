@@ -9,6 +9,11 @@ const ROWS = [
     smalblu: "Cross-layer platform. One system optimizes all six layers together.",
   },
   {
+    label: "Energy",
+    others: "Energy use isn't part of the conversation.",
+    smalblu: "Energy efficiency built into every optimization decision, with reporting to prove it.",
+  },
+  {
     label: "Intelligence",
     others: "Static rules or manual consulting engagements that go stale in weeks.",
     smalblu: "AI-first, multi-agent system that learns continuously from every deployment.",
@@ -16,12 +21,7 @@ const ROWS = [
   {
     label: "Outcomes",
     others: "FinOps-only cost scope: dashboards to read, reports to file.",
-    smalblu: "Maximum system efficiency, with cost, performance, and productivity gains as byproducts.",
-  },
-  {
-    label: "Sustainability",
-    others: "Carbon impact isn't part of the conversation.",
-    smalblu: "Sustainability built into every optimization decision, with reporting to prove it.",
+    smalblu: "Maximum system efficiency, with cost, energy, performance, and productivity gains as byproducts.",
   },
 ];
 

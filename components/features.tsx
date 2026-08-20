@@ -249,7 +249,7 @@ function EsgViz() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "0px 0px -40px 0px" });
   const show = reduce || inView;
-  const rows = ["CO₂ avoided", "Energy per query", "Audit-ready export"];
+  const rows = ["Energy saved this quarter", "Energy per query", "Audit-ready export"];
   return (
     <div ref={ref} className="w-full" aria-hidden="true">
       {rows.map((label, i) => (
@@ -266,7 +266,7 @@ function EsgViz() {
             </svg>
           </span>
           <span className="text-[13px] text-fog">{label}</span>
-          <span className="ml-auto whitespace-nowrap font-mono text-[10px] text-faint">{["−12.8 t", "−31%", "ISO"][i]}</span>
+          <span className="ml-auto whitespace-nowrap font-mono text-[10px] text-faint">{["−38 MWh", "−31%", "ISO"][i]}</span>
         </motion.div>
       ))}
     </div>
@@ -369,8 +369,8 @@ export function Features() {
           <FeatureCard
             className="lg:col-span-3"
             delay={0.2}
-            title="ESG Reporting"
-            desc="Audit-ready carbon reporting from every optimization decision."
+            title="Energy Reporting"
+            desc="Audit-ready energy reporting from every optimization decision."
             visual={<EsgViz />}
           />
         </div>

@@ -10,8 +10,8 @@ const FAQS = [
     a: "SmalBlu is the first AI platform that performs true cross-layer optimization, reasoning across user behavior, applications, compute, network, database, and storage as one system. Point tools tune a single layer in isolation; SmalBlu's agentic system optimizes the interactions between layers, and it self-learns across every deployment, so its recommendations keep getting sharper.",
   },
   {
-    q: "How does SmalBlu reduce cloud costs and emissions?",
-    a: "SmalBlu's agents continuously identify idle and misallocated resources, compress and tier data intelligently, and tune compute, database, and storage for efficiency. That delivers up to 40% savings on cloud spend. And because every optimization removes wasted energy, your data carbon footprint drops by up to 35% alongside it.",
+    q: "How does SmalBlu reduce cloud costs and energy use?",
+    a: "SmalBlu's agents continuously identify idle and misallocated resources, compress and tier data intelligently, and tune compute, database, and storage for efficiency. That delivers up to 40% savings on cloud spend. And because every optimization removes wasted work, the energy your infrastructure burns drops by up to 35% alongside it.",
   },
   {
     q: "Do I need to change my existing infrastructure?",
